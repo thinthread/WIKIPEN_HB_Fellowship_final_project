@@ -1,0 +1,28 @@
+
+{% extends 'base.html' %}
+{% block content %}
+    {% if login %}
+      <h3>IN SESSION</h3>
+    {% endif %}
+    <h2>Pen Post Page</h2>
+ 
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <form action = "/logout" method="POST">
+    <button type='submit' value='Submit'>Logout</button>    
+    </form>
+    <br>
+    <br>
+    <br>
+    <!-- <p><a href="/create_pen_post_form">:</a></p> -->
+
+    <form action = "/create_pen_post_form" method="POST"> 
+    <button type='submit' value='Submit'>Create A New Pen Post</button>
+    </form>
+
+
+{% endblock %}
