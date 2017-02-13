@@ -34,7 +34,7 @@ class StockPen(db.Model):
     end_year = db.Column(db.Integer)
     general_info = db.Column(db.String(2000), nullable=False)
     pen_category = db.Column(db.String(20), nullable=False)
-    pen_version = db.Column(db.String(15), nullable=False)
+    pen_version = db.Column(db.String(40), nullable=False)
     # event_log_id = db.Column(db.Integer, db.ForeignKey("EventLog.event_log_id"), autoincrement=True)
     # image_id = db.Column(db.Integer, db.ForeignKey("Images.image_id"), autoincrement=True)
 

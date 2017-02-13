@@ -125,35 +125,32 @@ def pen_posts():
 def create_pen_post_form():
     """Create new pen post form"""
 
-#     image = request.form.get("image")
-#     pen_name = request.form.get("pen_name")
-#     brand_name = request.form.get("brand_name")
-#     production_start_year = request.form.get("prodection_start_year")
-#     production_end_year = request.form.get("production_end_year")
-#     pen_prodcution_version = request.form.get("pen_prodcution_version")
-#     general_info = request.form.get("general_info")
-#     pen_type = request.form.get("pen_type")
+    image = request.form.get("image")
+    pen_name = request.form.get("pen_name")
+    brand_name = request.form.get("brand_name")
+    production_start_year = request.form.get("prodection_start_year")
+    production_end_year = request.form.get("production_end_year")
+    pen_production_version = request.form.get("pen_production_version")
+    general_info = request.form.get("general_info")
+    pen_type = request.form.get("pen_type")
 
-#     if db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first():
-#         flash("Sorry that specific pen name has already been created. \
-#                Please choose another another. Thank you!")
-#         return redirect("/create_pen_post_form")
-
-
-#     else:
-#         print image
+    if db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first():
+        flash("Sorry that specific pen name has already been created. \
+               Please choose another another. Thank you!")
+        return redirect("/create_pen_post_form")
 
 
-#     #     new_pen_post = StockPen(image=image,
-#     #                             pen_name=pen_name,
-#     #                             brand_name=brand_name,
-#     #                             production_start_year=production_start_year,
-#     #                             production_end_year=production_end_year,
-#     #                             pen_prodcution_version=pen_prodcution_version,
-#     #                             general_info=general_info,
-#     #                             pen_type=pen_type)
+    else:
+        print image
 
 
+        new_pen_post = StockPen(pen_title=pen_name,
+                                manufacturer=brand_name,
+                                start_year=production_start_year,
+                                end_year=production_end_year,
+                                pen_version=pen_production_version,
+                                general_info=general_info,
+                                pen_category=pen_type)
 # # (self.pen_title,
 # #  self.manufacturer,
 # #  self.start_year,
@@ -161,13 +158,10 @@ def create_pen_post_form():
 # #  self.general_info,
 # #  self.pen_category,
 # #  self.pen_version)
-
-
-
-#         # db.session.add(new_pen_post)
-#         # db.session.commit()
-#         flash("You have successfully created a new pen post!")
-#         return render_template("pen_posts.html")
+        db.session.add(new_pen_post)
+        db.session.commit()
+        flash("You have successfully created a new pen post!")
+        #return render_template("pen_posts.html")
 
 
 
