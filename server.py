@@ -121,13 +121,6 @@ def pen_posts():
     # return render_template("create_pen_post_form.html")
 
 
-# @app.route("/create_pen_post_form", methods=["POST"])
-# def show_create_pen_post_form():
-#     """Show create pen post form"""
-
-#     return render_template("create_pen_post_form.html")
-
-
 @app.route("/create_pen_post_form", methods=["POST"])
 def create_pen_post_form():
     """Create new pen post form"""
@@ -140,6 +133,8 @@ def create_pen_post_form():
     pen_production_version = request.form.get("pen_production_version")
     general_info = request.form.get("general_info")
     pen_type = request.form.get("pen_type")
+
+    login = session.get('login')
 
     if pen_name:
 
@@ -162,17 +157,39 @@ def create_pen_post_form():
             db.session.add(new_pen_post)
             db.session.commit()
             flash("You have successfully created a new pen post!")
-            return render_template("/pen_posts.html")
+            return render_template("/pen_posts.html", login=login)
 
     else:
 
-        return render_template("create_pen_post_form.html")
+        return render_template("create_pen_post_form.html", login=login)
 
 
+@app.route("/retrieve_search")
+def retrieve_search():
+    """Search and retrieve data base for posts"""
+
+    return render_template("pen_posts.html")
 
     # return page back of form
     # can you return form in basic html template?
     # ask how for can be returned
+
+
+# @app.route("/update", methods=["POST"])
+# def update():
+#     """Search and retrieve data base for posts"""
+
+#     return render_template("pen_posts.html")
+
+
+# @app.route("/delete", methods=["POST"])
+# def delete():
+#     """Search and retrieve data base for posts"""
+
+#     return render_template("pen_posts.html")
+
+
+
 
 
 if __name__ == "__main__":
