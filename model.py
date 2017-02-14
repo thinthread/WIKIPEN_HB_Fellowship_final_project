@@ -22,22 +22,22 @@ class User(db.Model):
                                                  self.first_name,
                                                  self.last_name)
 
+
 class StockPen(db.Model):
     """Details of stock_pens and thier info."""
 
     __tablename__ = "pens"
 
     s_pen_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    pen_title = db.Column(db.String(30), nullable=False)
+    pen_title = db.Column(db.String(30))
     manufacturer = db.Column(db.String(20))
-    start_year = db.Column(db.Integer)
-    end_year = db.Column(db.Integer)
-    general_info = db.Column(db.String(2000), nullable=False)
-    pen_category = db.Column(db.String(20), nullable=False)
-    pen_version = db.Column(db.String(40), nullable=False)
-    # event_log_id = db.Column(db.Integer, db.ForeignKey("EventLog.event_log_id"), autoincrement=True)
-    # image_id = db.Column(db.Integer, db.ForeignKey("Images.image_id"), autoincrement=True)
-
+    start_year = db.Column(db.Integer)  # js make sure to set INT to 0 if no entry
+    end_year = db.Column(db.Integer)  # js make sure to set INT to 0 if no entry
+    general_info = db.Column(db.String(2000))
+    pen_category = db.Column(db.String(20))
+    pen_version = db.Column(db.String(20))
+    # event_log_id = db.Column(db.Integer, db.ForeignKey("event.event_log_id"), autoincrement=True)
+    # image_id = db.Column(db.Integer, db.ForeignKey("images.image_id"), autoincrement=True)
 
     def __repr__(self):
 
@@ -49,6 +49,9 @@ class StockPen(db.Model):
                                                                      self.general_info,
                                                                      self.pen_category,
                                                                      self.pen_version)
+                                                                     # self.event_log_id,
+                                                                     # self.image_id
+
 
 class EventLog(db.Model):
     """Track user input events per create or update of a post."""
@@ -58,7 +61,7 @@ class EventLog(db.Model):
     event_log_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     date_time = db.Column(db.String(30), nullable=False)
     user_id_email = db.Column(db.String, db.ForeignKey("users.user_id_email"), nullable=True)
-    s_pen_id = db.Column(db.Integer, db.ForeignKey("pens.s_pen_id"), nullable=True)
+    s_pen_id = db.Column(db.Integer, db.ForeignKey("pens.s_pen_id"))
 
     user = db.relationship("User", backref=db.backref("events"))
 
@@ -78,22 +81,15 @@ class Image(db.Model):
 
     image_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     image_url = db.Column(db. String(300))
-    s_pen_id = db.Column(db.ForeignKey("pens.s_pen_id"))
+    s_pen_id = db.Column(db.Integer, db.ForeignKey("pens.s_pen_id"))
 
     pen = db.relationship("StockPen", backref=db.backref("images"))
-
 
     def __repr__(self):
 
         return"<Images image_url=%s s_pen_id=%s>" % (self.image_url,
                                                      self.s_pen_id)
 
-
-    # parent_host = relationship("HostEntry",
-    #                     primaryjoin=ip_address == cast(content, INET),
-    #                     foreign_keys=content,
-    #                     remote_side=ip_address
-    #                 )
 
 
 # HELPING functions to connect to db and connect flask app to the db.
