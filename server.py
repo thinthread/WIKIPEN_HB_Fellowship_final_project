@@ -10,6 +10,8 @@ from model import (User, EventLog, StockPen, Image,
 
 from model import connect_to_db, db
 
+from sqlalchemy import or_
+
 app = Flask(__name__)
 
 # # Required to use Flask sessions and the debug toolbar
@@ -164,11 +166,74 @@ def create_pen_post_form():
         return render_template("create_pen_post_form.html", login=login)
 
 
-@app.route("/retrieve_search")
-def retrieve_search():
-    """Search and retrieve data base for posts"""
 
-    return render_template("pen_posts.html")
+@app.route("/search_retrieve")
+def search_retrieve():
+    """Show search_retrieve screen"""
+
+    return render_template("search_retrieve.html")
+
+
+
+# @app.route("/auto_complete_search.json")     ######### fuzzy search
+# def auuto_complete_search_json
+
+# # when doing ajax request pass in paramiters
+# # js thing = name
+
+
+
+# search = db.session.query(Stockpen).filter_by(StockPen.pen_title.like("%%")).all() % pen_name\
+#                         or (Stockpen.manufacturer.like("%%s%")) % brand_name \
+#                         # or (Stockpen.start_year.like("%%d%")).all() % production_start_year \
+#                         or (Stockpen.pen_version.Like("%%s%")).a() % pen_production_version \
+#                         or (Stockpen.general_info.like("%%s%")).all() % general_info \
+#                         or (Stockpen.pen_category.like("%%s%")).all() % pen_type \
+
+
+# @app.route("/search_retrieve")
+# def search_retrieve():
+#     """Search and retrieve data base for user to see post"""
+
+#     pen_name = request.form.get("pen_name")
+#     # brand_name = request.form.get("brand_name")
+#     # production_start_year = request.form.get("production_start_year")
+#     # pen_production_version = request.form.get("pen_production_version")
+#     # general_info = request.form.get("general_info")
+#     # pen_type = request.form.get("pen_type")
+
+
+#     pen_name = db.session.query(Stockpen).filter_by(pen_title=pen_name).all() 
+#     # manufacturer = db.session.query(Stockpen).filter_by(manufacturer=brand_name).all()
+#     # pen_version = db.session.query(Stockpen).filter_by(pen_version=pen_production_version).all()
+#     # general_info = db.session.query(Stockpen).filter_by(general_info=general_info).all()
+#     # penpen_category=pen_type).all()
+
+#     search = db.session.query.filter(Stock)
+    
+
+# search = Stockpen.query.filter_by(pen_title=pen_name) 
+
+#                                                                     # pen_name 
+
+#     if search:
+
+#         return render_template("show_search_results.html", pen_title=pen_name,
+#                                                            manufacturer=brand_name,
+#                                                            pen_version=pen_production_version,
+#                                                            general_info=general_info,
+#                                                            pen_category=pen_type)
+
+#     else:
+
+#         flash("Hmmm...It seems that the item you are looking for is not part \
+#                of our data-base just yet or is under a different name. \
+#                Please try your search again. Thank you!")
+
+
+
+
+    # return render_template("pen_posts.html")
 
     # return page back of form
     # can you return form in basic html template?

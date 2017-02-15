@@ -12,14 +12,18 @@
     <br>
     <br>
     <br>
-    <form action = "/logout" method="POST">
-    <button type='submit' value='Submit'>Logout</button>    
+    <br>
+    <br>
+    <form id="create" action="/create_pen_post_form" method="POST"> 
+        <button type='submit' value='Submit'>Create New Post</button>
     </form>
     <br>
+    <form id="search" action="/search_retrieve">
+        <button type='submit' value='Submit'>Search Existing Posts</button>
+    </form>
     <br>
-    <br>
-    <form action = "/create_pen_post_form" method="POST"> 
-    <button type='submit' value='Submit'>Create A New Pen Post</button>
+    <form id="logout"action="/logout" method="POST">
+        <button type='submit' value='Submit'>Logout</button>    
     </form>
 
 

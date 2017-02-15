@@ -4,11 +4,23 @@
 <h1>This is the home page</h1>
 
 <h2></h2>
-<!-- <p><a href="/movies">View all pen posts here.</a></p> -->
+
 
 <h2>User login here</h2>
-<!-- <p><a href="/users">View all users</a></p> -->
-<p><a href="/register_form">Create new account:</a></p>
-<p><a href="/login_form">Existing accounts:</a></p>
+
+
+<form id="reigster" action="/register_form"> 
+    <button type='submit' value='Submit'>Create New Account</button>
+</form>
+<br>
+<form id="login" action="/login_form"> 
+    <button type='submit' value='Submit'>Existing Accounts</button>
+</form>
+<br>
+<form id="search" action="/search_retrieve"> 
+    <button type='submit' value='Submit'>Search Posts</button>
+</form>
 
 {% endblock %}
+
+<!-- <p><a href="/users">View all users</a></p> -->

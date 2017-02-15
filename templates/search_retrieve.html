@@ -2,16 +2,25 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Please fill out the following fields to create your post!</h2>
+    <h2>Please fill out one of the following fields to establish your search!
+    </h2>
 
-    <form action ="/create_pen_post_form" method="POST">
-      Image:
-      <input type="text" name="image">
-      <br>
-      <br>
+    <form action ="/search_retrieve" method="GET">
       Pen Name:
       <input type="text" name="pen_name">
+      <button type='submit' value='Submit'>Search</button>
+    </form>
+
+
+
+<!--       Pen Name:
+      <input type="text" name="pen_name">
       <br>
+      <br>
+      <button type='submit' value='Submit'>Submit</button> -->
+
+
+<!--       <br>
       <br>
       Brand Name:
       <input type="text" name="brand_name">
@@ -58,13 +67,7 @@
         <option value="Other">Other</option>     
       </select>
       <br>
-      <br>
-      <button type='submit' value='Submit'>Submit</button>
-    </form>
+      <br> -->
+
 
 {% endblock %}
-
-
-
-
-
