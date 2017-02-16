@@ -17,8 +17,10 @@
     <button type='submit' value='Submit'>Existing Accounts</button>
 </form>
 <br>
-<form id="search" action="/search_retrieve"> 
-    <button type='submit' value='Submit'>Search Posts</button>
+<form action ="/show_search_results" method="GET">
+  Search by brand name:
+  <input type="text" name="brand_name">
+  <button type='submit' value='Submit'>Search</button>
 </form>
 
 {% endblock %}

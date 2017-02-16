@@ -3,16 +3,47 @@
 {% block content %}
   
     <h5>Search Results!<h5>
-    <h2>{{}}</h2>
 
-    <form action ="/create_pen_post_form{{ }}" method="POST">
-    
+
+   <form action ="/show_search_results/{{ pens }}" method="POST">
     </form>
 
     <ul>
-      {% for pen in pen_name %}
+      {% for pen in pens %}
         <li>
-      {% enfor %}
+          Pen Name: {{pen.pen_title}}
+          <br>
+          <form id="pen_detail" action="/pen_detail">
+            <a href="{{pen.get_url}}">
+              Pen Link: {{pen.pen_title}}
+            </a> 
+          </form>
+        </li>
+      {% endfor %}
+
     </ul>
+    <br>
+    <br>
+    <br>
+    <form id="pen_posts" action="/pen_posts"> 
+      <button type='submit' value='Submit'>Back to Posts</button>
+    </form>
+    <br>
+
+    <form id="logout"action="/logout" method="POST">
+      <button type='submit' value='Submit'>Logout</button>    
+    </form>
 
 {% endblock %}
+
+
+<!--  Double check on passing get_url as a route to pen_detail @ server.py -->
+
+
+
+
+
+
+
+
+

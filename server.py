@@ -1,6 +1,6 @@
 from jinja2 import StrictUndefined
 
-
+# from flask_sqlalchemy import SQLAlchemy
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import (Flask, render_template, redirect, request, flash,
                   session, jsonify)
@@ -8,7 +8,7 @@ from flask import (Flask, render_template, redirect, request, flash,
 from model import (User, EventLog, StockPen, Image,
                    connect_to_db, db)
 
-from model import connect_to_db, db
+# from model import connect_to_db, db
 
 from sqlalchemy import or_
 
@@ -120,7 +120,6 @@ def pen_posts():
     # users = User.query.all()
     login = session.get('login')
     return render_template("pen_posts.html", login=login)
-    # return render_template("create_pen_post_form.html")
 
 
 @app.route("/create_pen_post_form", methods=["POST"])
@@ -166,22 +165,69 @@ def create_pen_post_form():
         return render_template("create_pen_post_form.html", login=login)
 
 
+@app.route("/show_search_results")
+def show_search_results():
+    """Search and retrieve data for user to see post"""
 
-@app.route("/search_retrieve")
-def search_retrieve():
-    """Show search_retrieve screen"""
+    # pen_title = StockPen.query.get(2)
 
-    return render_template("search_retrieve.html")
+    # return render_template("show_search_results.html", pen_title=pen_title)
+
+    search = request.args.get("brand_name")  # manufacturer
+
+    pens = StockPen.query.filter_by(manufacturer=search).all()
+
+    return render_template("show_search_results.html", pens=pens)
+
+
+@app.route("/pens/<int:pen_id>")
+def pen(pen_id):
+    """Render single pen"""
+
+    pen = StockPen.query.get(pen_id)
+
+    return render_template("pen.html", pen=pen)
+
+
+@app.route("/pen_detail/")
+def pen_detail():
+    """Show pen detail"""
+
+    # pen = StockPen.query.get(pen_id)
+
+    return render_template("pen_detail.html")  # pen=pen
+
+
+
+
+
+    # else:
+
+    #     flash("Hmmm...It seems that the item you are looking for is not part \
+    #            of our data-base just yet or is under a different name. \
+    #            Please try your search again. Thank you!")
+
+    #     return render_template("pen_posts.html")
+
+
+# @app.route("/search_retrieve")
+# def search_retrieve():
+#     """Show search_retrieve screen"""
+
+#     # pen_title = StockPen.query.filter_by(pen_title=).first()
+
+#     # pen_title = StockPen.query.get(2)
+
+#     # return render_template("search_retrieve.html",pen_title=pen_title)
+
 
 
 
 # @app.route("/auto_complete_search.json")     ######### fuzzy search
 # def auuto_complete_search_json
 
-# # when doing ajax request pass in paramiters
-# # js thing = name
-
-
+######## when doing ajax request pass in paramiters
+######## js thing = name
 
 # search = db.session.query(Stockpen).filter_by(StockPen.pen_title.like("%%")).all() % pen_name\
 #                         or (Stockpen.manufacturer.like("%%s%")) % brand_name \
@@ -189,55 +235,6 @@ def search_retrieve():
 #                         or (Stockpen.pen_version.Like("%%s%")).a() % pen_production_version \
 #                         or (Stockpen.general_info.like("%%s%")).all() % general_info \
 #                         or (Stockpen.pen_category.like("%%s%")).all() % pen_type \
-
-
-# @app.route("/search_retrieve")
-# def search_retrieve():
-#     """Search and retrieve data base for user to see post"""
-
-#     pen_name = request.form.get("pen_name")
-#     # brand_name = request.form.get("brand_name")
-#     # production_start_year = request.form.get("production_start_year")
-#     # pen_production_version = request.form.get("pen_production_version")
-#     # general_info = request.form.get("general_info")
-#     # pen_type = request.form.get("pen_type")
-
-
-#     pen_name = db.session.query(Stockpen).filter_by(pen_title=pen_name).all() 
-#     # manufacturer = db.session.query(Stockpen).filter_by(manufacturer=brand_name).all()
-#     # pen_version = db.session.query(Stockpen).filter_by(pen_version=pen_production_version).all()
-#     # general_info = db.session.query(Stockpen).filter_by(general_info=general_info).all()
-#     # penpen_category=pen_type).all()
-
-#     search = db.session.query.filter(Stock)
-    
-
-# search = Stockpen.query.filter_by(pen_title=pen_name) 
-
-#                                                                     # pen_name 
-
-#     if search:
-
-#         return render_template("show_search_results.html", pen_title=pen_name,
-#                                                            manufacturer=brand_name,
-#                                                            pen_version=pen_production_version,
-#                                                            general_info=general_info,
-#                                                            pen_category=pen_type)
-
-#     else:
-
-#         flash("Hmmm...It seems that the item you are looking for is not part \
-#                of our data-base just yet or is under a different name. \
-#                Please try your search again. Thank you!")
-
-
-
-
-    # return render_template("pen_posts.html")
-
-    # return page back of form
-    # can you return form in basic html template?
-    # ask how for can be returned
 
 
 # @app.route("/update", methods=["POST"])

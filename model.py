@@ -39,6 +39,10 @@ class StockPen(db.Model):
     # event_log_id = db.Column(db.Integer, db.ForeignKey("event.event_log_id"), autoincrement=True)
     # image_id = db.Column(db.Integer, db.ForeignKey("images.image_id"), autoincrement=True)
 
+    def get_url(self):
+        return "/pens/%s" % self.s_pen_id
+
+
     def __repr__(self):
 
         return "<StockPen pen_title=%s manufacturer=%s start_year=%s end_year=%s \

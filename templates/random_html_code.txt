@@ -1,0 +1,21 @@
+   <form action ="/show_search_results/{{ pen_title }}" method="POST">
+    </form>
+
+    <ul>
+
+        <li>
+          Pen Name: {{pen_title.pen_title}}
+        </li>
+
+    </ul>
+    <br>
+    <br>
+    <br>
+    <form id="pen_posts" action="/pen_posts"> 
+      <button type='submit' value='Submit'>Back to Posts</button>
+    </form>
+    <br>
+
+    <form id="logout"action="/logout" method="POST">
+      <button type='submit' value='Submit'>Logout</button>    
+    </form>
