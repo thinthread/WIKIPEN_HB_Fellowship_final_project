@@ -10,14 +10,13 @@
 
     <ul>
       {% for pen in pens %}
+      <!-- pass get url object -->
         <li>
-          Pen Name: {{pen.pen_title}}
-          <br>
-          <form id="pen_detail" action="/pen_detail">
-            <a href="{{pen.get_url}}">
+            <a href="{{pen.get_url()}}">
               Pen Link: {{pen.pen_title}}
+
             </a> 
-          </form>
+
         </li>
       {% endfor %}
 

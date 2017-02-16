@@ -139,7 +139,10 @@ def create_pen_post_form():
 
     if pen_name:
 
-        if db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first():
+        pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
+
+        if pen:
+
             flash("Sorry that specific pen name has already been created. \
                    Please choose another another. Thank you!")
 
@@ -189,13 +192,13 @@ def pen(pen_id):
     return render_template("pen.html", pen=pen)
 
 
-@app.route("/pen_detail/")
-def pen_detail():
-    """Show pen detail"""
+# @app.route("/pen_detail/<int:pen_id>")
+# def pen_detail(pen_id):
+#     """Show pen detail"""
 
-    # pen = StockPen.query.get(pen_id)
+#     pen = StockPen.query.get(pen_id)
 
-    return render_template("pen_detail.html")  # pen=pen
+#     return render_template("pen_detail.html", pen=pen)  # pen=pen
 
 
 
