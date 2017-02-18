@@ -3,6 +3,8 @@
 
 <head>
     <title>WIKIPEN</title>
+    <script src="https://code.jquery.com/jquery.js"></script>
+
 </head>
 
 <body>
@@ -13,8 +15,25 @@
         {{ flash }}
     {% endfor %}
 
+
+
+
     {% block content %} put your content here {% endblock %}
 
+<div id="stream">
+</div>
+<script>
+var source = new EventSource("{{ url_for('sse.stream') }}");
+source.addEventListener('edit', function(event) {
+    var data = JSON.parse(event.data);
+
+    $('#stream').prepend('<div>pen, id: ' + data['id'] + 
+        ' name:' + data['name'] +
+        ' rest: ' + event.data +
+        '</div>');
+}, false);
+</script>
 </body>
+
 
 </html>

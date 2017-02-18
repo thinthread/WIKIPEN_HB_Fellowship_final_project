@@ -4,6 +4,7 @@ from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import (Flask, render_template, redirect, request, flash,
                   session, jsonify)
+from flask_sse import sse
 
 from model import (User, EventLog, StockPen, Image,
                    connect_to_db, db)
@@ -13,14 +14,25 @@ from model import (User, EventLog, StockPen, Image,
 from sqlalchemy import or_
 
 app = Flask(__name__)
+app.config["REDIS_URL"] = "redis://localhost"
+# sse = server-sent events.
+app.register_blueprint(sse, url_prefix='/stream')
 
-# # Required to use Flask sessions and the debug toolbar
-app.secret_key = "ABC"
 
 # # Normally, if you use an undefined variable in Jinja2, it fails
 # # silently. This is horrible. Fix this so that, instead, it raises an
 # # error.
 app.jinja_env.undefined = StrictUndefined
+app.debug = True
+app.jinja_env.auto_reload = app.debug  # make sure templates, etc. are not cached in debug mode
+
+    # # Required to use Flask sessions and the debug toolbar
+app.secret_key = "ABC"
+
+connect_to_db(app)
+
+    # Use the DebugToolbar
+DebugToolbarExtension(app)
 
 
 ########################### VIEWS ###############################
@@ -105,7 +117,7 @@ def logout_screen():
 def logout():
     """Display logout screen"""
 
-    if not session.get("login"):
+    if session.get("login"):
         session.pop("login")
 
     flash("You have been successfully logged out.")
@@ -179,7 +191,12 @@ def show_search_results():
 
     search = request.args.get("brand_name")  # manufacturer
 
-    pens = StockPen.query.filter_by(manufacturer=search).all()
+    #pens = StockPen.query.filter_by(manufacturer=search).all()
+    pens = StockPen.query.filter(or_(
+        StockPen.manufacturer.contains(search),
+        StockPen.pen_version.contains(search),
+        StockPen.pen_category.contains(search),
+        StockPen.pen_title.contains(search))).all()
 
     return render_template("show_search_results.html", pens=pens)
 
@@ -188,14 +205,16 @@ def show_search_results():
 def pen(pen_id):
     """Render single pen, show detail, hidden option to update pen detail"""
 
+    #print session
+    #print session["login"]
 
 
     pen = StockPen.query.get(pen_id)
 
-    login = session.get("login")
+    #login = session.get("login")
 
 
-    return render_template("pen.html", pen=pen, login=login)
+    return render_template("pen.html", pen=pen)
 
 @app.route("/update_pen", methods=['POST'])
 def update_pen():
@@ -224,6 +243,11 @@ def update_pen():
         pen_to_update.general_info = general_info
 
     db.session.commit()
+
+    sse.publish({"id": s_pen_id, 
+        "brand_name": brand_name,
+        "start_year": production_start_year,
+        "name": pen_name}, type='edit')
 
     return redirect("/pens/%s" % s_pen_id)
 
@@ -296,12 +320,6 @@ def update_pen():
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
-    app.debug = True
-    app.jinja_env.auto_reload = app.debug  # make sure templates, etc. are not cached in debug mode
-
-    connect_to_db(app)
-
-    # Use the DebugToolbar
-    DebugToolbarExtension(app)
-
     app.run(port=5000, host='0.0.0.0')
+
+

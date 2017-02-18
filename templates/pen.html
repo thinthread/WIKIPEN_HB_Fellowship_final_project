@@ -10,16 +10,16 @@
     Pen Type: {{ pen.pen_category }}<br>
     General Info: {{ pen.general_info }}<br>
 
+ 
+    {% if "login" in session %}
 
-    {% if login in session %}
-      <h3></h3>
-    {% endif %}
     <br>
     <br>
-    <button type='submit' value='Submit'>Edit Pen Post</button>
+    <button id="show_form" type='submit' value='Submit'>Edit Pen Post</button>
 
-    <h2>Please fill out the following fields to create your post!</h2>
+
     <div class="update_pen_form">
+    <h2>Please fill out the following fields to create your post!</h2>
         <form action ="/update_pen" method="POST">
           <input type="text" name="pen_id" value="{{ pen.s_pen_id }}" hidden>
           Image: 
@@ -79,7 +79,18 @@
           <button type='submit' value='Submit'>Submit</button>
         </form>
     </div>
+    <script>
+      $('.update_pen_form').hide();
 
+    
+        $('#show_form').click(function(){
+          $('.update_pen_form').show();
+        });
+
+
+    </script>
+
+    {% endif %}
 
 {% endblock %}
  
