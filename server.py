@@ -135,13 +135,14 @@ def create_pen_post_form():
     general_info = request.form.get("general_info")
     pen_type = request.form.get("pen_type")
 
+
     login = session.get('login')
 
     if pen_name:
 
-        pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
+        _pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
 
-        if pen:
+        if _pen:
 
             flash("Sorry that specific pen name has already been created. \
                    Please choose another another. Thank you!")
@@ -183,13 +184,48 @@ def show_search_results():
     return render_template("show_search_results.html", pens=pens)
 
 
-@app.route("/pens/<int:pen_id>")
+@app.route("/pens/<int:pen_id>", methods=["GET"])
 def pen(pen_id):
-    """Render single pen"""
+    """Render single pen, show detail, hidden option to update pen detail"""
+
+
 
     pen = StockPen.query.get(pen_id)
 
-    return render_template("pen.html", pen=pen)
+    login = session.get("login")
+
+
+    return render_template("pen.html", pen=pen, login=login)
+
+@app.route("/update_pen", methods=['POST'])
+def update_pen():
+
+        # update_image = request.form.get("image")
+    pen_name = request.form.get("pen_name")
+    brand_name = request.form.get("brand_name")
+    production_start_year = request.form.get("production_start_year")
+    production_end_year = request.form.get("production_end_year")
+    pen_production_version = request.form.get("pen_production_version")
+    general_info = request.form.get("general_info")
+    pen_type = request.form.get("pen_type")
+
+    s_pen_id = request.form.get("pen_id")
+
+    pen_to_update = StockPen.query.get(int(s_pen_id))
+
+    if pen_name:
+
+        pen_to_update.pen_title = pen_name
+        pen_to_update.manufacturer = brand_name
+        pen_to_update.start_year = production_start_year
+        pen_to_update.end_year = production_end_year
+        pen_to_update.pen_version = pen_production_version
+        pen_to_update.pen_category = pen_type
+        pen_to_update.general_info = general_info
+
+    db.session.commit()
+
+    return redirect("/pens/%s" % s_pen_id)
 
 
 # @app.route("/pen_detail/<int:pen_id>")

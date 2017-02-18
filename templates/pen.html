@@ -2,16 +2,83 @@
 {% block content %}
 
 
-  Pen Name: {{ pen.pen_title }}<br>
-  Brand Name: {{ pen.manufacturer }}<br>
-  Production Start Year: {{ pen.start_year }}<br> 
-  Production End Year: {{ pen.end_year }}<br>
-  Pen Production Version: {{ pen.pen_version }}<br>
-  Pen Type: {{ pen.pen_category }}<br>
-  General Info: {{ pen.general_info }}<br>
+    Pen Name: {{ pen.pen_title }}<br>
+    Brand Name: {{ pen.manufacturer }}<br>
+    Production Start Year: {{ pen.start_year }}<br> 
+    Production End Year: {{ pen.end_year }}<br>
+    Pen Production Version: {{ pen.pen_version }}<br>
+    Pen Type: {{ pen.pen_category }}<br>
+    General Info: {{ pen.general_info }}<br>
 
 
+    {% if login in session %}
+      <h3></h3>
+    {% endif %}
+    <br>
+    <br>
+    <button type='submit' value='Submit'>Edit Pen Post</button>
 
+    <h2>Please fill out the following fields to create your post!</h2>
+    <div class="update_pen_form">
+        <form action ="/update_pen" method="POST">
+          <input type="text" name="pen_id" value="{{ pen.s_pen_id }}" hidden>
+          Image: 
+          <input type="text" name="image">
+          <br>
+          <br>
+          Pen Name:
+          <input type="text" name="pen_name" value="{{ pen.pen_title }}">
+          <br>
+          <br>
+          Brand Name:
+          <input type="text" name="brand_name" value="{{ pen.manufacturer }}">
+          <br>
+          <br>
+          Production Start Year:
+          <input type="text" name="production_start_year" value="{{ pen.start_year }}">
+          <br>
+          <br>
+          Production End Year:
+          <input type="text" name="production_end_year" value="{{ pen.end_year }}">
+          <br>
+          <br>
+          Pen Production Version: 
+          <select name="pen_production_version">
+            <option value="none">None</option>
+            <option value="standard_stock_pen">Standard Stock Pen</option>
+            <option value="special_edition">Special Edition</option>
+            <option value="limited_edition">Limited Edition</option>
+            <option value="custom pen">Custom Pen</option>
+            <option value="franken_pen">Franken-Pen</option>
+          </select>
+          <br>
+          <br>
+          Pen Type:
+          <select name="pen_type">
+            <option value="none">None</option>
+            <option value="fountain_pen">Fountain Pen</option>
+            <option value="combo_pen">Combo Pen</option>
+            <option value="dip_pen">Dip Pen</option>
+            <option value="reed_pen">Reed Pen</option>
+            <option value="brush_pen">Brush Pen</option>
+            <option value="rollerball_pen">Rollerball Pen</option>
+            <option value="ballpoint_pen">Ballpoint Pen</option>
+            <option value="gel_pen">Gel Pen</option>
+            <option value="multi_funtion_pen">Multi-funtion Pen/Pencil</option>
+            <option value="mechanical_pencil">Mechanical Pencil</option>
+            <option value="audi">Septer Pencil</option>
+            <option value="lead_holder">Lead Holder</option>
+            <option value="Other">Other</option>     
+          </select>
+          <br>
+          <br>
+          General Info:
+          <textarea id="general_info" name="general_info">{{pen.general_info}}</textarea>
+          <br>
+          <br>
+          <button type='submit' value='Submit'>Submit</button>
+        </form>
+    </div>
 
 
 {% endblock %}
