@@ -15,15 +15,26 @@
 
     <br>
     <br>
+   
     <button id="show_form" type='submit' value='Submit'>Edit Pen Post</button>
-
+    <br>
+    <br>
+    <form id="pen_post" action="/pen_posts" method="GET">
+        <button type='submit' value='Submit'>Pevious Page</button>    
+    </form>
+    <br>    
+    <form id="logout"action="/logout" method="POST">
+        <button type='submit' value='Submit'>Logout</button>    
+    </form>
+    <br>
+   
 
     <div class="update_pen_form">
     <h2>Please fill out the following fields to create your post!</h2>
-        <form action ="/update_pen" method="POST">
+        <form action ="/update_pen" method="POST" enctype="multipart/form-data">
           <input type="text" name="pen_id" value="{{ pen.s_pen_id }}" hidden>
           Image: 
-          <input type="text" name="image">
+          <input type="file" name="image">
           <br>
           <br>
           Pen Name:
@@ -45,30 +56,30 @@
           Pen Production Version: 
           <select name="pen_production_version">
             <option value="none">None</option>
-            <option value="standard_stock_pen">Standard Stock Pen</option>
-            <option value="special_edition">Special Edition</option>
-            <option value="limited_edition">Limited Edition</option>
-            <option value="custom pen">Custom Pen</option>
-            <option value="franken_pen">Franken-Pen</option>
+            <option value="standard_stock_pen"{% if pen.pen_version == "standard_stock_pen" %}selected="selected"{% endif %}>Standard Stock Pen</option>
+            <option value="special_edition"{% if pen.pen_version == "special_edition" %}selected="selected"{% endif %}>Special Edition</option>
+            <option value="limited_edition"{% if pen.pen_version == "limited_edition" %}selected="selected"{% endif %}>Limited Edition</option>
+            <option value="custom pen"{% if pen.pen_version == "custom pen" %}selected="selected"{% endif %}>Custom Pen</option>
+            <option value="franken_pen"{% if pen.pen_version == "franken_pen" %}selected="selected"{% endif %}>Franken-Pen</option>
           </select>
           <br>
           <br>
           Pen Type:
           <select name="pen_type">
             <option value="none">None</option>
-            <option value="fountain_pen">Fountain Pen</option>
-            <option value="combo_pen">Combo Pen</option>
-            <option value="dip_pen">Dip Pen</option>
-            <option value="reed_pen">Reed Pen</option>
-            <option value="brush_pen">Brush Pen</option>
-            <option value="rollerball_pen">Rollerball Pen</option>
-            <option value="ballpoint_pen">Ballpoint Pen</option>
-            <option value="gel_pen">Gel Pen</option>
-            <option value="multi_funtion_pen">Multi-funtion Pen/Pencil</option>
-            <option value="mechanical_pencil">Mechanical Pencil</option>
-            <option value="audi">Septer Pencil</option>
-            <option value="lead_holder">Lead Holder</option>
-            <option value="Other">Other</option>     
+            <option value="fountain_pen"{% if pen.pen_category == "fountain_pen" %}selected="selected"{% endif %}>Fountain Pen</option>
+            <option value="combo_pen"{% if pen.pen_category == "combo_pen" %}selected="selected"{% endif %}>Combo Pen</option>
+            <option value="dip_pen"{% if pen.pen_category == "dip_pen" %}selected="selected"{% endif %}>Dip Pen</option>
+            <option value="reed_pen"{% if pen.pen_category == "reed_pen" %}selected="selected"{% endif %}>Reed Pen</option>
+            <option value="brush_pen"{% if pen.pen_category == "brush_pen" %}selected="selected"{% endif %}>Brush Pen</option>
+            <option value="rollerball_pen"{% if pen.pen_category == "rollerball_pen" %}selected="selected"{% endif %}>Rollerball Pen</option>
+            <option value="ballpoint_pen"{% if pen.pen_category == "combo_pen" %}selected="selected"{% endif %}>Ballpoint Pen</option>
+            <option value="gel_pen"{% if pen.pen_category == "gel_pen" %}selected="selected"{% endif %}>Gel Pen</option>
+            <option value="multi_funtion_pen"{% if pen.pen_category == "multi_funtion_pen" %}selected="selected"{% endif %}>Multi-funtion Pen/Pencil</option>
+            <option value="mechanical_pencil"{% if pen.pen_category == "mechanical_pencil" %}selected="selected"{% endif %}>Mechanical Pencil</option>
+            <option value="septer_pencil"{% if pen.pen_category == "septer_pencil" %}selected="selected"{% endif %}>Septer Pencil</option>
+            <option value="lead_holder"{% if pen.pen_category == "lead_holder" %}selected="selected"{% endif %}>Lead Holder</option>
+            <option value="Other"{% if pen.pen_category == "other" %}selected="selected"{% endif %}>Other</option>     
           </select>
           <br>
           <br>
@@ -93,6 +104,8 @@
     {% endif %}
 
 {% endblock %}
+
+    <!-- <IMG SRC="{{ pen.url }}"></img> -->
  
 
 

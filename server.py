@@ -1,17 +1,24 @@
 from jinja2 import StrictUndefined
 
 # from flask_sqlalchemy import SQLAlchemy
+from werkzeug import secure_filename
+
+from flask_sse import sse
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import (Flask, render_template, redirect, request, flash,
-                  session, jsonify)
-from flask_sse import sse
+                   session, jsonify)
+
 
 from model import (User, EventLog, StockPen, Image,
                    connect_to_db, db)
+import uuid   # for random file name uploads
 
 # from model import connect_to_db, db
 
 from sqlalchemy import or_
+from google.cloud import storage
+
+storage_client = storage.Client.from_service_account_json('wikipen-86a6bc3c96db.json')
 
 app = Flask(__name__)
 app.config["REDIS_URL"] = "redis://localhost"
@@ -66,9 +73,9 @@ def register():
 
     else:
         new_user = User(first_name=first_name,
-                         last_name=last_name,
-                         user_id_email=email,
-                         password=password)
+                        last_name=last_name,
+                        user_id_email=email,
+                        password=password)
 
         db.session.add(new_user)
         db.session.commit()
@@ -141,7 +148,7 @@ def create_pen_post_form():
     # image = request.form.get("image")
     pen_name = request.form.get("pen_name")
     brand_name = request.form.get("brand_name")
-    production_start_year = request.form.get("prodection_start_year")
+    production_start_year = request.form.get("production_start_year")
     production_end_year = request.form.get("production_end_year")
     pen_production_version = request.form.get("pen_production_version")
     general_info = request.form.get("general_info")
@@ -154,6 +161,27 @@ def create_pen_post_form():
 
         _pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
 
+
+
+        # if request.method == 'POST':
+        #     file = request.files['file']
+        #     extension = secure_filename(file.filename).rsplit('.', 1)[1]
+        #     options = {}
+        #     options['retry_params'] = gcs.RetryParams(backoff_factor=1.1)
+        #     options['content_type'] = 'image/' + extension
+        #     bucket_name = "gcs-tester-app"
+        #     path = '/' + bucket_name + '/' + str(secure_filename(file.filename))
+
+        # if file and allowed_file(file.filename):
+        #     try:
+        #         with gcs.open(path, 'w', **options) as f:
+        #             f.write(file.stream.read())  # instead of f.write(str(file))
+        #             print jsonify({"success": True})
+        #         return jsonify({"success": True})
+        #     except Exception as e:
+        #         logging.exception(e)
+        #         return jsonify({"success": False})
+
         if _pen:
 
             flash("Sorry that specific pen name has already been created. \
@@ -163,6 +191,23 @@ def create_pen_post_form():
 
         else:
 
+            # todo dont try to upload a file if it wasnt specified.
+            file = request.files['image']
+            if file:
+                #extension = secure_filename(file.filename).rsplit(".", 1)[1]
+                # todo randomly choose a name.
+                path = str(uuid.uuid4())
+                #path = secure_filename(file.filename)
+                bucket = storage_client.get_bucket('wikipen')
+
+                # todo it might not be image/jpeg type
+                blob.upload_from_string(file.stream.read(), file.content_type)
+                blob.reload()
+                url = blob.public_url
+                print "Image uploaded to: "
+                print url
+
+            # maybe you get a new url, maybe not.
             new_pen_post = StockPen(pen_title=pen_name,
                                     manufacturer=brand_name,
                                     start_year=production_start_year,
@@ -170,6 +215,7 @@ def create_pen_post_form():
                                     pen_version=pen_production_version,
                                     general_info=general_info,
                                     pen_category=pen_type)
+                                    # mage_id=image
 
             db.session.add(new_pen_post)
             db.session.commit()
@@ -205,25 +251,20 @@ def show_search_results():
 def pen(pen_id):
     """Render single pen, show detail, hidden option to update pen detail"""
 
-    #print session
-    #print session["login"]
-
-
     pen = StockPen.query.get(pen_id)
 
-    #login = session.get("login")
-
-
     return render_template("pen.html", pen=pen)
+
 
 @app.route("/update_pen", methods=['POST'])
 def update_pen():
 
-        # update_image = request.form.get("image")
+    # update_image = request.form.get("image")
     pen_name = request.form.get("pen_name")
     brand_name = request.form.get("brand_name")
     production_start_year = request.form.get("production_start_year")
     production_end_year = request.form.get("production_end_year")
+    print production_end_year
     pen_production_version = request.form.get("pen_production_version")
     general_info = request.form.get("general_info")
     pen_type = request.form.get("pen_type")
@@ -236,18 +277,29 @@ def update_pen():
 
         pen_to_update.pen_title = pen_name
         pen_to_update.manufacturer = brand_name
-        pen_to_update.start_year = production_start_year
-        pen_to_update.end_year = production_end_year
         pen_to_update.pen_version = pen_production_version
         pen_to_update.pen_category = pen_type
         pen_to_update.general_info = general_info
 
+        if production_start_year and production_start_year != "None":
+            pen_to_update.start_year = int(production_start_year)
+        else:
+            pen_to_update.start_year = None
+
+        if production_end_year and production_end_year != "None":
+            pen_to_update.end_year = int(production_end_year)
+        else:
+            pen_to_update.end_year = None
+
+
+
+
     db.session.commit()
 
-    sse.publish({"id": s_pen_id, 
-        "brand_name": brand_name,
-        "start_year": production_start_year,
-        "name": pen_name}, type='edit')
+    sse.publish({"id": s_pen_id,
+                 "brand_name": brand_name,
+                 "start_year": production_start_year,
+                 "name": pen_name}, type='edit')
 
     return redirect("/pens/%s" % s_pen_id)
 
@@ -322,4 +374,6 @@ if __name__ == "__main__":
     # point that we invoke the DebugToolbarExtension
     app.run(port=5000, host='0.0.0.0')
 
+# to run gunicorn server
+# gunicorn server:app --worker-class gevent --bind 0.0.0.0:5000 --reload --graceful-timeout 3
 

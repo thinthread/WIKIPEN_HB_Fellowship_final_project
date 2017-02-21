@@ -13,3 +13,4 @@ flask-sse
 gunicorn
 gevent
 inotify
+google-cloud-storage

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "wikipen-159304",
+  "private_key_id": "86a6bc3c96db9b9c82ca86c8cd2cbe1717528916",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCwoOx9MSLyqH0+\nTvULt6Bdxgl4VwGONDYq88VV5X6XX5+LTwhU8e0HsClMxaUnBi56UtxAKx+DPfM5\n59bpfTGtQ9zYY6xAWsI3cQUjWlJwYvVdPOnX8ngZ0PMUQdDjWjgTVAOBSi5txBFw\nBd+p6ciHSiZAmLqBZD+Vtzvxj3rM7L7yTpzsglG2HBRWPom4SEbeJtelX7uZzPrd\nf6nBR5ZtJ7QlV7h0OP+v3FiyXqIs+YfH6acotsv6cMiHzHrvXxexWO228E+SpNmu\nMyPctYr1IR1H6++yQl5j3JqrAsSfjP1ujsEHcX8C9UuVt9LdjJpvTqjdHY/tm0xU\nZ3+4ydAtAgMBAAECggEAYq5V0hAMzXPzHUexwo0iDKIjElfR56gmB1NQkg/47Qug\nsI1EQ2kym5QBTwIxph7fArqekT9GiOWoqVZtDOBES+BZV5BAYWgTkDQVwc2pt16i\nZSguIdc24H2MAWpQEWWLZMkQeECAthTQBT1S27Rgs61qt7ZcpQPkPno0BF68JhbE\nmVS2Y0UQX2miFHhuXA7daTSs0/r1HhCTx/XVwHKrF3G5SAr9jYGlNb6XS3tR+uES\nxiIQSAJZe7Mws/hX7qVv1oXM3bY30LQ7d/YZ2P9V6vhdVqF2uCzURmYtd6iZ9Y4Y\nwDQ9Zx7H29kNLWs3+j5eXZSQ+/ue4W8tR/DiQIyd4QKBgQDnSkENXAj+bS0jQQmZ\nb3XaKGlMcG58Nl2d+CU/XZRl4eG53dqT3VwDPf58qPSnzVxrTOuqAXKTv3C84Ajo\n/cgw2FW81mh7QeCAf+7AN/IRAq4LldiD/30RJ7a742Ab/h7oTWTh1S7kr/Nu2T3B\neZAHFy7Rlcm/qLuvQxlBlBzPSQKBgQDDf7AZHlwWsuDLTJPGWhxdgnEhrxaeDjOi\nVVr9rIsRUYYAll3xIlay93Ns0BIsY/gab/s8/mqvM0wyK9t0Tlv+WNRoLXdhmoy8\nQ+xhIgZqSmOEelbzZvTJNaukjeljnV4RyRGOvZwf02cmgIcI4q4lT0fHx/9z+Lva\nZ5pIZaLlxQKBgDc+z0cHosZTAaMYF9jkfLv9RxmRCXL18WqYKR13lsi3KZmh2mHT\nT/UeS7kvCjFCpj6jAu96pQmRgrY6tSYh6D1yjxgqBo7ab2uCI18afeF+SGBQDIWK\n8y6z07wRVZWaH3vRcLVYnHjXZkgl79BU3wgyi2ZYZvY2sY3tcwzs+eyxAoGAaSkl\nW82l8ZvVKeaOUxMj0PUaz+iz/N9czQSnBm+q+uzkbSp1bAFxq6FKGI0wSWqZCfeU\nqLGeR5ILea13xe9kssOrtkJGxlzxOVA8Nd+snb5YG+oHHbUTFazmIIUptyjuchi7\ndhHuinwYL3DRsmjlDjLAROoDMqnousoiBrGNV5UCgYBCu65YP0ANGqKqGP04BpM+\nqp/G1LklD4wZ6v79HR0wvNpiN8Z5cUKph11P/dr073Bm5sW4gHLsPpyA6saYvJx9\nn8vQzP+AxUWJVmTxU+mEjvYZAYQh/+BWOph7KeM+62V8dlCAOUIVSoXN2wEa+Kq6\n/h4cCqBQ0OiVVh8litsJCw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "flask-app@wikipen-159304.iam.gserviceaccount.com",
+  "client_id": "108808279415273590907",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/flask-app%40wikipen-159304.iam.gserviceaccount.com"
+}

@@ -31,8 +31,8 @@ class StockPen(db.Model):
     s_pen_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     pen_title = db.Column(db.String(30))
     manufacturer = db.Column(db.String(20))
-    start_year = db.Column(db.Integer)  # js make sure to set INT to 0 if no entry
-    end_year = db.Column(db.Integer)  # js make sure to set INT to 0 if no entry
+    start_year = db.Column(db.Integer)
+    end_year = db.Column(db.Integer)
     general_info = db.Column(db.String(2000))
     pen_category = db.Column(db.String(20))
     pen_version = db.Column(db.String(20))
@@ -41,7 +41,6 @@ class StockPen(db.Model):
 
     def get_url(self):
         return "/pens/%s" % self.s_pen_id
-
 
     def __repr__(self):
 
@@ -53,8 +52,8 @@ class StockPen(db.Model):
                                                                      self.general_info,
                                                                      self.pen_category,
                                                                      self.pen_version)
-                                                                     # self.event_log_id,
                                                                      # self.image_id
+                                                                     # self.event_log_id,
 
 
 class EventLog(db.Model):
@@ -95,9 +94,7 @@ class Image(db.Model):
                                                      self.s_pen_id)
 
 
-
 # HELPING functions to connect to db and connect flask app to the db.
-
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 

@@ -4,9 +4,9 @@
 
     <h2>Please fill out the following fields to create your post!</h2>
 
-    <form action ="/create_pen_post_form" method="POST">
+    <form action ="/create_pen_post_form" method="POST" enctype="multipart/form-data">
       Image:
-      <input type="text" name="image">
+      <input type="file" name="image">
       <br>
       <br>
       Pen Name:
