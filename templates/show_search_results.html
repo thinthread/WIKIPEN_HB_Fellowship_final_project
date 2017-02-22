@@ -25,14 +25,23 @@
     <br>
     <br>
     <br>
-    <form id="pen_posts" action="/pen_posts"> 
-      <button type='submit' value='Submit'>Back to Posts</button>
+    <form id="home_page" action="/"> 
+      <button type='submit' value='Submit'>Home Page / Search</button>
     </form>
     <br>
 
-    <form id="logout"action="/logout" method="POST">
-      <button type='submit' value='Submit'>Logout</button>    
-    </form>
+    {% if 'login' in session %}
+
+      <form id="pen_post" action="/pen_posts" method="GET">
+          <button type='submit' value='Submit'>Previous Page</button>    
+      </form>
+      <br> 
+
+      <form id="logout"action="/logout" method="POST">
+        <button type='submit' value='Submit'>Logout</button>    
+      </form>
+
+    {% endif %}
 
 {% endblock %}
 

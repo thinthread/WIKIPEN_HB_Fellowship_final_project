@@ -12,13 +12,16 @@ from flask import (Flask, render_template, redirect, request, flash,
 from model import (User, EventLog, StockPen, Image,
                    connect_to_db, db)
 import uuid   # for random file name uploads
+# import json
+# import gcs_client
 
 # from model import connect_to_db, db
 
 from sqlalchemy import or_
-from google.cloud import storage
+# from google.cloud import storage
 
-storage_client = storage.Client.from_service_account_json('wikipen-86a6bc3c96db.json')
+
+# storage_client = storage.Client.from_service_account_json('wikipen-86a6bc3c96db.json')
 
 app = Flask(__name__)
 app.config["REDIS_URL"] = "redis://localhost"
@@ -33,7 +36,7 @@ app.jinja_env.undefined = StrictUndefined
 app.debug = True
 app.jinja_env.auto_reload = app.debug  # make sure templates, etc. are not cached in debug mode
 
-    # # Required to use Flask sessions and the debug toolbar
+# # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 
 connect_to_db(app)
@@ -199,6 +202,7 @@ def create_pen_post_form():
                 path = str(uuid.uuid4())
                 #path = secure_filename(file.filename)
                 bucket = storage_client.get_bucket('wikipen')
+                # blobstore.create_upload_url()
 
                 # todo it might not be image/jpeg type
                 blob.upload_from_string(file.stream.read(), file.content_type)
@@ -236,6 +240,7 @@ def show_search_results():
     # return render_template("show_search_results.html", pen_title=pen_title)
 
     search = request.args.get("brand_name")  # manufacturer
+    session['search'] = search
 
     #pens = StockPen.query.filter_by(manufacturer=search).all()
     pens = StockPen.query.filter(or_(
@@ -311,61 +316,6 @@ def update_pen():
 #     pen = StockPen.query.get(pen_id)
 
 #     return render_template("pen_detail.html", pen=pen)  # pen=pen
-
-
-
-
-
-    # else:
-
-    #     flash("Hmmm...It seems that the item you are looking for is not part \
-    #            of our data-base just yet or is under a different name. \
-    #            Please try your search again. Thank you!")
-
-    #     return render_template("pen_posts.html")
-
-
-# @app.route("/search_retrieve")
-# def search_retrieve():
-#     """Show search_retrieve screen"""
-
-#     # pen_title = StockPen.query.filter_by(pen_title=).first()
-
-#     # pen_title = StockPen.query.get(2)
-
-#     # return render_template("search_retrieve.html",pen_title=pen_title)
-
-
-
-
-# @app.route("/auto_complete_search.json")     ######### fuzzy search
-# def auuto_complete_search_json
-
-######## when doing ajax request pass in paramiters
-######## js thing = name
-
-# search = db.session.query(Stockpen).filter_by(StockPen.pen_title.like("%%")).all() % pen_name\
-#                         or (Stockpen.manufacturer.like("%%s%")) % brand_name \
-#                         # or (Stockpen.start_year.like("%%d%")).all() % production_start_year \
-#                         or (Stockpen.pen_version.Like("%%s%")).a() % pen_production_version \
-#                         or (Stockpen.general_info.like("%%s%")).all() % general_info \
-#                         or (Stockpen.pen_category.like("%%s%")).all() % pen_type \
-
-
-# @app.route("/update", methods=["POST"])
-# def update():
-#     """Search and retrieve data base for posts"""
-
-#     return render_template("pen_posts.html")
-
-
-# @app.route("/delete", methods=["POST"])
-# def delete():
-#     """Search and retrieve data base for posts"""
-
-#     return render_template("pen_posts.html")
-
-
 
 
 
