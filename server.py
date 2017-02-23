@@ -1,29 +1,38 @@
 from jinja2 import StrictUndefined
 
-# from flask_sqlalchemy import SQLAlchemy
-from werkzeug import secure_filename
+import os
+from flask import Flask, request, redirect, url_for
+from werkzeug.utils import secure_filename
+from werkzeug import SharedDataMiddleware
+# from werkzeug import secure_filename
 
+
+from flask import send_from_directory
 from flask_sse import sse
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
+from flask import Flask, Request
 
 
-from model import (User, EventLog, StockPen, Image,
-                   connect_to_db, db)
+from model import (User, StockPen, connect_to_db, db)
+                    # EventLog, Image,
+
+
 import uuid   # for random file name uploads
 # import json
-# import gcs_client
-
 # from model import connect_to_db, db
-
 from sqlalchemy import or_
+
+# import gcs_client
 # from google.cloud import storage
-
-
 # storage_client = storage.Client.from_service_account_json('wikipen-86a6bc3c96db.json')
 
+#########from selenium import webdriver
+
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
 app.config["REDIS_URL"] = "redis://localhost"
 # sse = server-sent events.
 app.register_blueprint(sse, url_prefix='/stream')
@@ -47,11 +56,86 @@ DebugToolbarExtension(app)
 
 ########################### VIEWS ###############################
 
-@app.route("/")
+
+# browser = webdriver.Firefox()
+# driver = webdriver.Chrome(executable_path=r"C:\Chrome\chromedriver.exe")
+
+# browser.get('http://localhost:5000')
+# assert browser.title == 'UberCalc'
+
+# x = browser.find_element_by_id('x-field')
+# x.send_keys("3")
+# y = browser.find_element_by_id('y-field')
+# y.send_keys("4")
+
+# btn = browser.find_element_by_id('calc-button')
+# btn.click()
+
+# result = browser.find_element_by_id('result')
+# assert result.text == "7"
+
+UPLOAD_FOLDER = '/path/to/the/uploads'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+# disallow .php files if the server executes them, but who has PHP installed on their server
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route("/", methods=['GET', 'POST'])
 def index():
     """Homepage."""
 
-    return render_template("homepage.html")
+    if index:
+        return render_template("homepage.html")
+
+    if request.method == 'POST':
+    # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('uploaded_file',
+                                    filename=filename))
+
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+         <input type=submit value=Upload>
+    </form>
+    '''
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+
+
+        ##### egister uploaded_file as build_only rule
+        # app.add_url_rule('/uploads/<filename>', 'uploaded_file',
+        #                  build_only=True)
+        # app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+        #     '/uploads':  app.config['UPLOAD_FOLDER']
+        # })
+
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
+
+
+
 
 
 @app.route("/register_form")
@@ -194,22 +278,22 @@ def create_pen_post_form():
 
         else:
 
-            # todo dont try to upload a file if it wasnt specified.
-            file = request.files['image']
-            if file:
-                #extension = secure_filename(file.filename).rsplit(".", 1)[1]
-                # todo randomly choose a name.
-                path = str(uuid.uuid4())
-                #path = secure_filename(file.filename)
-                bucket = storage_client.get_bucket('wikipen')
-                # blobstore.create_upload_url()
+        #     # todo dont try to upload a file if it wasnt specified.
+        #     file = request.files['image']
+        #     if file:
+        #         #extension = secure_filename(file.filename).rsplit(".", 1)[1]
+        #         # todo randomly choose a name.
+        #         path = str(uuid.uuid4())
+        #         #path = secure_filename(file.filename)
+        #         bucket = storage_client.get_bucket('wikipen')
+        #         # blobstore.create_upload_url()
 
-                # todo it might not be image/jpeg type
-                blob.upload_from_string(file.stream.read(), file.content_type)
-                blob.reload()
-                url = blob.public_url
-                print "Image uploaded to: "
-                print url
+        #         # todo it might not be image/jpeg type
+        #         blob.upload_from_string(file.stream.read(), file.content_type)
+        #         blob.reload()
+        #         url = blob.public_url
+        #         print "Image uploaded to: "
+        #         print url
 
             # maybe you get a new url, maybe not.
             new_pen_post = StockPen(pen_title=pen_name,
@@ -298,7 +382,6 @@ def update_pen():
 
 
 
-
     db.session.commit()
 
     sse.publish({"id": s_pen_id,
@@ -308,14 +391,6 @@ def update_pen():
 
     return redirect("/pens/%s" % s_pen_id)
 
-
-# @app.route("/pen_detail/<int:pen_id>")
-# def pen_detail(pen_id):
-#     """Show pen detail"""
-
-#     pen = StockPen.query.get(pen_id)
-
-#     return render_template("pen_detail.html", pen=pen)  # pen=pen
 
 
 

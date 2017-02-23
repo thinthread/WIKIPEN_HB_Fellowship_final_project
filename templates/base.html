@@ -22,17 +22,17 @@
 
 <div id="stream">
 </div>
-<script>
-var source = new EventSource("{{ url_for('sse.stream') }}");
-source.addEventListener('edit', function(event) {
-    var data = JSON.parse(event.data);
+    <script>
+        var source = new EventSource("{{ url_for('sse.stream') }}");
+        source.addEventListener('edit', function(event) {
+            var data = JSON.parse(event.data);
 
-    $('#stream').prepend('<div>pen, id: ' + data['id'] + 
-        ' name:' + data['name'] +
-        ' rest: ' + event.data +
-        '</div>');
-}, false);
-</script>
+            $('#stream').prepend('<div>pen, id: ' + data['id'] + 
+                ' name:' + data['name'] +
+                ' rest: ' + event.data +
+                '</div>');
+        }, false);
+    </script>
 </body>
 
 
