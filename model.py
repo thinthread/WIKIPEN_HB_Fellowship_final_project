@@ -37,8 +37,8 @@ class StockPen(db.Model):
     general_info = db.Column(db.String(2000))
     pen_category = db.Column(db.String(20))
     pen_version = db.Column(db.String(20))
-    # event_log_id = db.Column(db.Integer, db.ForeignKey("event.event_log_id"), autoincrement=True)
-    # image_id = db.Column(db.Integer, db.ForeignKey("images.image_id"), autoincrement=True)
+    # image_id = db.Column(db.Integer, db.ForeignKey("images.image_id"))
+    # event_log_id = db.Column(db.Integer, db.ForeignKey("event.event_log_id"))
 
     def get_url(self):
         return "/pens/%s" % self.s_pen_id
@@ -53,7 +53,6 @@ class StockPen(db.Model):
                                                                      self.general_info,
                                                                      self.pen_category,
                                                                      self.pen_version)
-                                                                     # self.image_id
                                                                      # self.event_log_id,
 
 

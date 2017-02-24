@@ -15,8 +15,8 @@ from flask import (Flask, render_template, redirect, request, flash,
 from flask import Flask, Request
 
 
-from model import (User, StockPen, connect_to_db, db)
-                    # EventLog, Image,
+from model import (User, StockPen, Image, connect_to_db, db)
+                    # EventLog, ,
 
 
 import uuid   # for random file name uploads
@@ -74,10 +74,6 @@ DebugToolbarExtension(app)
 # result = browser.find_element_by_id('result')
 # assert result.text == "7"
 
-UPLOAD_FOLDER = '/path/to/the/uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-# disallow .php files if the server executes them, but who has PHP installed on their server
-
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -90,52 +86,6 @@ def index():
 
     if index:
         return render_template("homepage.html")
-
-    if request.method == 'POST':
-    # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
-
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
-
-
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-
-
-        ##### egister uploaded_file as build_only rule
-        # app.add_url_rule('/uploads/<filename>', 'uploaded_file',
-        #                  build_only=True)
-        # app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-        #     '/uploads':  app.config['UPLOAD_FOLDER']
-        # })
-
-
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
-
-
-
 
 
 @app.route("/register_form")
@@ -183,8 +133,10 @@ def login():
 
     email = request.form.get("email")
     password = request.form.get("password")
+    print '\n\n\n email: ', email
+    print '\n\n\n password: ', password
     user_info = User.query.filter_by(user_id_email=email).first()
-
+    print '\n\n\n\n\n', user_info, '\n\n\n\n\n\n'
     if user_info:
         # user_id = user_info.user_id_email
         if user_info.password == password:
@@ -228,11 +180,16 @@ def pen_posts():
     return render_template("pen_posts.html", login=login)
 
 
+# UPLOAD_FOLDER = '/path/to/the/uploads'
+# ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+# #######   disallow .php files if the server executes them, but who has PHP installed on their server
+
+
 @app.route("/create_pen_post_form", methods=["POST"])
 def create_pen_post_form():
     """Create new pen post form"""
 
-    # image = request.form.get("image")
+    image = request.form.get("image")
     pen_name = request.form.get("pen_name")
     brand_name = request.form.get("brand_name")
     production_start_year = request.form.get("production_start_year")
@@ -241,14 +198,11 @@ def create_pen_post_form():
     general_info = request.form.get("general_info")
     pen_type = request.form.get("pen_type")
 
-
     login = session.get('login')
 
     if pen_name:
 
         _pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
-
-
 
         # if request.method == 'POST':
         #     file = request.files['file']
@@ -278,6 +232,35 @@ def create_pen_post_form():
 
         else:
 
+            # if _pen:
+            #     if request.method == 'POST':
+            #     # check if the post request has the file part
+            #         if 'file' not in request.files:
+            #             flash('No file part')
+            #             return redirect(request.url)
+            #         file = request.files['file']
+            #         # if user does not select file, browser also
+            #         # submit a empty part without filename
+            #         if file.filename == '':
+            #             flash('No selected file')
+            #             return redirect(request.url)
+            #         if file and allowed_file(file.filename):
+            #             filename = secure_filename(file.filename)
+            #             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            #             return redirect(url_for('uploaded_file',
+            #                                     filename=filename))
+
+            #      # check on LargeGAinary
+
+            #     return '''
+            #     <!doctype html>
+            #     <title>Upload new File</title>
+            #     <h1>Upload new File</h1>
+            #     <form method=post enctype=multipart/form-data>
+            #       <p><input type=file name=file>
+            #          <input type=submit value=Upload>
+            #     </form>
+            #     '''
         #     # todo dont try to upload a file if it wasnt specified.
         #     file = request.files['image']
         #     if file:
@@ -303,16 +286,96 @@ def create_pen_post_form():
                                     pen_version=pen_production_version,
                                     general_info=general_info,
                                     pen_category=pen_type)
-                                    # mage_id=image
+
+            new_image = Image(image_url=image,
+                              pen=new_pen_post)
 
             db.session.add(new_pen_post)
+            db.session.add(new_image)
             db.session.commit()
+
             flash("You have successfully created a new pen post!")
             return render_template("/pen_posts.html", login=login)
 
     else:
 
         return render_template("create_pen_post_form.html", login=login)
+
+
+@app.route("/update_pen", methods=['POST'])
+def update_pen():
+
+    image = request.form.get("image")
+    pen_name = request.form.get("pen_name")
+    brand_name = request.form.get("brand_name")
+    production_start_year = request.form.get("production_start_year")
+    production_end_year = request.form.get("production_end_year")
+    pen_production_version = request.form.get("pen_production_version")
+    general_info = request.form.get("general_info")
+    pen_type = request.form.get("pen_type")
+
+    s_pen_id = request.form.get("pen_id")
+
+    pen_to_update = StockPen.query.get(int(s_pen_id))
+
+    if pen_name:
+
+        pen_to_update.image_url = image
+        pen_to_update.pen_title = pen_name
+        pen_to_update.manufacturer = brand_name
+        pen_to_update.pen_version = pen_production_version
+        pen_to_update.pen_category = pen_type
+        pen_to_update.general_info = general_info
+
+        if production_start_year and production_start_year != "None":
+            pen_to_update.start_year = int(production_start_year)
+        else:
+            pen_to_update.start_year = None
+
+        if production_end_year and production_end_year != "None":
+            pen_to_update.end_year = int(production_end_year)
+        else:
+            pen_to_update.end_year = None
+
+    new_image = Image(image_url=image,
+                      pen=s_pen_id)
+
+    db.session.add(new_image)
+
+    db.session.commit()
+
+    sse.publish({"image_url": image,
+                 "id": s_pen_id,
+                 "brand_name": brand_name,
+                 "start_year": production_start_year,
+                 "name": pen_name}, type='edit')
+
+    return redirect("/pens/%s" % s_pen_id)
+
+
+# @app.route('/uploads/<filename>')
+# def uploaded_file(filename):
+
+#     return send_from_directory(app.config['UPLOAD_FOLDER'],
+#                                filename)
+
+        ##### egister uploaded_file as build_only rule
+        # app.add_url_rule('/uploads/<filename>', 'uploaded_file',
+        #                  build_only=True)
+        # app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+        #     '/uploads':  app.config['UPLOAD_FOLDER']
+# })
+
+
+@app.route("/pens/<int:pen_id>", methods=["GET"])
+def pen(pen_id):
+    """Render single pen, show detail, hidden option to update pen detail"""
+
+    pen = StockPen.query.get(pen_id)
+
+    print pen.images
+
+    return render_template("pen.html", pen=pen)
 
 
 @app.route("/show_search_results")
@@ -334,65 +397,6 @@ def show_search_results():
         StockPen.pen_title.contains(search))).all()
 
     return render_template("show_search_results.html", pens=pens)
-
-
-@app.route("/pens/<int:pen_id>", methods=["GET"])
-def pen(pen_id):
-    """Render single pen, show detail, hidden option to update pen detail"""
-
-    pen = StockPen.query.get(pen_id)
-
-    return render_template("pen.html", pen=pen)
-
-
-@app.route("/update_pen", methods=['POST'])
-def update_pen():
-
-    # update_image = request.form.get("image")
-    pen_name = request.form.get("pen_name")
-    brand_name = request.form.get("brand_name")
-    production_start_year = request.form.get("production_start_year")
-    production_end_year = request.form.get("production_end_year")
-    print production_end_year
-    pen_production_version = request.form.get("pen_production_version")
-    general_info = request.form.get("general_info")
-    pen_type = request.form.get("pen_type")
-
-    s_pen_id = request.form.get("pen_id")
-
-    pen_to_update = StockPen.query.get(int(s_pen_id))
-
-    if pen_name:
-
-        pen_to_update.pen_title = pen_name
-        pen_to_update.manufacturer = brand_name
-        pen_to_update.pen_version = pen_production_version
-        pen_to_update.pen_category = pen_type
-        pen_to_update.general_info = general_info
-
-        if production_start_year and production_start_year != "None":
-            pen_to_update.start_year = int(production_start_year)
-        else:
-            pen_to_update.start_year = None
-
-        if production_end_year and production_end_year != "None":
-            pen_to_update.end_year = int(production_end_year)
-        else:
-            pen_to_update.end_year = None
-
-
-
-    db.session.commit()
-
-    sse.publish({"id": s_pen_id,
-                 "brand_name": brand_name,
-                 "start_year": production_start_year,
-                 "name": pen_name}, type='edit')
-
-    return redirect("/pens/%s" % s_pen_id)
-
-
-
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the

@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 
-
+          
+    {% for pen in pen.images %}
+    <img type="file" src="{{ pen.image_url }}">
+    {% endfor %}<br>
     Pen Name: {{ pen.pen_title }}<br>
     Brand Name: {{ pen.manufacturer }}<br>
     Production Start Year: {{ pen.start_year }}<br> 
@@ -52,8 +55,36 @@
     <h2>Please fill out the following fields to create your post!</h2>
         <form action ="/update_pen" method="POST" enctype="multipart/form-data">
           <input type="text" name="pen_id" value="{{ pen.s_pen_id }}" hidden>
-          Image: 
-          <input type="file" name="image">
+          Image-1:
+          <br> 
+          <!-- <input type="file" name="image"> -->
+          {% for pen in pen.images %}
+          <img type="file" src="{{ pen.image_url }}">
+          {% endfor %}
+          <br>
+          Pen Image URL-1:
+          <input type="text" value="{{ pen.images }}">
+          <br>
+          <br>
+
+          Image-2:
+          <br>
+          {% for pen in pen.images %}
+          <img type="file" src="{{ pen.image_url }}">
+          {% endfor %}
+          <br>
+          Pen Image URL-2:
+          <input type="text" value="{{ pen.images }}">
+          <br>
+          <br>
+          Image-3:
+          <br> 
+          {% for pen in pen.images %}
+          <img type="file" src="{{ pen.image_url }}">
+          {% endfor %}
+          <br>
+          Pen Image URL-3:
+          <input type="text" value="{{ pen.images }}">
           <br>
           <br>
           Pen Name:
