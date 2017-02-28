@@ -86,7 +86,7 @@ class Image(db.Model):
     image_url = db.Column(db. String(300))
     s_pen_id = db.Column(db.Integer, db.ForeignKey("pens.s_pen_id"))
 
-    pen = db.relationship("StockPen", backref=db.backref("images"))
+    pen = db.relationship("StockPen", backref=db.backref("images"), order_by=image_id)
 
     def __repr__(self):
 

@@ -189,7 +189,9 @@ def pen_posts():
 def create_pen_post_form():
     """Create new pen post form"""
 
-    image = request.form.get("image")
+    image_1 = request.form.get("image_1")
+    image_2 = request.form.get("image_2")
+    image_3 = request.form.get("image_3")
     pen_name = request.form.get("pen_name")
     brand_name = request.form.get("brand_name")
     production_start_year = request.form.get("production_start_year")
@@ -198,11 +200,19 @@ def create_pen_post_form():
     general_info = request.form.get("general_info")
     pen_type = request.form.get("pen_type")
 
+    s_pen_id = request.form.get("pen_id")
+
     login = session.get('login')
+
+    # pen_to_add = StockPen.query.get(int(s_pen_id))
+
+
+
 
     if pen_name:
 
         _pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
+        # pen_images = db.session.query(Image.s_pen_id).filter_by(or_(pen=s_pen_id)).all()
 
         # if request.method == 'POST':
         #     file = request.files['file']
@@ -278,7 +288,6 @@ def create_pen_post_form():
         #         print "Image uploaded to: "
         #         print url
 
-            # maybe you get a new url, maybe not.
             new_pen_post = StockPen(pen_title=pen_name,
                                     manufacturer=brand_name,
                                     start_year=production_start_year,
@@ -287,11 +296,14 @@ def create_pen_post_form():
                                     general_info=general_info,
                                     pen_category=pen_type)
 
-            new_image = Image(image_url=image,
-                              pen=new_pen_post)
+            new_image_1 = Image(image_url=image_1, pen=s_pen_id)
+            new_image_2 = Image(image_url=image_2, pen=s_pen_id)
+            new_image_3 = Image(image_url=image_3, pen=s_pen_id)
 
             db.session.add(new_pen_post)
-            db.session.add(new_image)
+            db.session.add(new_image_1)
+            db.session.add(new_image_2)
+            db.session.add(new_image_3)
             db.session.commit()
 
             flash("You have successfully created a new pen post!")
@@ -305,7 +317,10 @@ def create_pen_post_form():
 @app.route("/update_pen", methods=['POST'])
 def update_pen():
 
-    image = request.form.get("image")
+    form_images = request.form.getlist("images")
+    print "form images:"
+    print form_images
+
     pen_name = request.form.get("pen_name")
     brand_name = request.form.get("brand_name")
     production_start_year = request.form.get("production_start_year")
@@ -314,37 +329,62 @@ def update_pen():
     general_info = request.form.get("general_info")
     pen_type = request.form.get("pen_type")
 
-    s_pen_id = request.form.get("pen_id")
+    s_pen_id = int(request.form.get("pen_id"))
 
-    pen_to_update = StockPen.query.get(int(s_pen_id))
+    pen_to_update = StockPen.query.get(s_pen_id)
+    print "pen to update:"
+    print pen_to_update
+    print pen_to_update.images
 
-    if pen_name:
+    # query pen to update via s_pen_id
 
-        pen_to_update.image_url = image
-        pen_to_update.pen_title = pen_name
-        pen_to_update.manufacturer = brand_name
-        pen_to_update.pen_version = pen_production_version
-        pen_to_update.pen_category = pen_type
-        pen_to_update.general_info = general_info
+    # # query returns list of iamges via s_pen_id
+    for img_update in map(None, pen_to_update.images, form_images):
+        if img_update[0] is None:
+            # create new image
+            print "Creating new image"
+            new_image = Image(image_url=img_update[1], pen=pen_to_update)
+            db.session.add(new_image)
+        elif img_update[0].image_url != img_update[1]:
+            img_update[0].image_url = img_update[1]
 
-        if production_start_year and production_start_year != "None":
-            pen_to_update.start_year = int(production_start_year)
-        else:
-            pen_to_update.start_year = None
+    #for image in images_to_update:
+    #    if pen_to_update.images[0].image_url == image_1:
+    #        new_image_1 = Image(image_url=image_1, pen=s_pen_id)
 
-        if production_end_year and production_end_year != "None":
-            pen_to_update.end_year = int(production_end_year)
-        else:
-            pen_to_update.end_year = None
+        # 3 urls, for this pen does this pen image already exist?
+        # query, list of images via pen_to_upadate.images (back_ref) ... all the imaages'
+                # pen_to_update.images[0].image_url == image_1, if it does !=
+                    #pen_to_update.images[0].image_url. = image_1
+                # same for image 2 and three,
 
-    new_image = Image(image_url=image,
-                      pen=s_pen_id)
+        # list of oject loop through, if url in list do nothing, if not in list, add
+        # 3 things,
+           # check them in order, the order that the images come out is the same as the way we query psql
+           # anything in our eisting list that is not in the new list should get tossed,
+           # anthing that mathes we do nothing
+           # anything int he new list that is not in the existing list gets added
+           # if in list, they stay in order and compair back html form
 
-    db.session.add(new_image)
+    pen_to_update.pen_title = pen_name
+    pen_to_update.manufacturer = brand_name
+    pen_to_update.pen_version = pen_production_version
+    pen_to_update.pen_category = pen_type
+    pen_to_update.general_info = general_info
+
+    if production_start_year and production_start_year != "None":
+        pen_to_update.start_year = int(production_start_year)
+    else:
+        pen_to_update.start_year = None
+
+    if production_end_year and production_end_year != "None":
+        pen_to_update.end_year = int(production_end_year)
+    else:
+        pen_to_update.end_year = None
 
     db.session.commit()
 
-    sse.publish({"image_url": image,
+    sse.publish({"image_url": pen_to_update.images[0].image_url,
                  "id": s_pen_id,
                  "brand_name": brand_name,
                  "start_year": production_start_year,
@@ -401,7 +441,7 @@ def show_search_results():
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
-    app.run(port=5000, host='0.0.0.0')
+    app.run(port=5001, host='0.0.0.0')
 
 # to run gunicorn server
 # gunicorn server:app --worker-class gevent --bind 0.0.0.0:5000 --reload --graceful-timeout 3

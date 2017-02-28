@@ -36,11 +36,11 @@
    
     <button id="show_form" type='submit' value='Submit'>Edit Pen Post</button>
     <br>
-    <br>
+ <!--    <br>
     <form id="pen_post" action="/pen_posts" method="GET">
         <button type='submit' value='Submit'>Previous Page</button>    
     </form>
-    <br>  
+    <br>   -->
 
    
     <br>
@@ -55,37 +55,22 @@
     <h2>Please fill out the following fields to create your post!</h2>
         <form action ="/update_pen" method="POST" enctype="multipart/form-data">
           <input type="text" name="pen_id" value="{{ pen.s_pen_id }}" hidden>
-          Image-1:
-          <br> 
-          <!-- <input type="file" name="image"> -->
-          {% for pen in pen.images %}
-          <img type="file" src="{{ pen.image_url }}">
-          {% endfor %}
-          <br>
-          Pen Image URL-1:
-          <input type="text" value="{{ pen.images }}">
-          <br>
-          <br>
 
-          Image-2:
-          <br>
-          {% for pen in pen.images %}
-          <img type="file" src="{{ pen.image_url }}">
-          {% endfor %}
-          <br>
-          Pen Image URL-2:
-          <input type="text" value="{{ pen.images }}">
-          <br>
-          <br>
-          Image-3:
+          Images:
+          <div id="images">
           <br> 
-          {% for pen in pen.images %}
-          <img type="file" src="{{ pen.image_url }}">
+          {% for img in pen.images %}
+          <img type="file" name="images" src="{{ img.image_url }}">
+          <br>
+          Pen Image URL:
+          <input type="text" name="images" value="{{ img.image_url }}"> 
+          <br>
+          <br>
           {% endfor %}
-          <br>
-          Pen Image URL-3:
-          <input type="text" value="{{ pen.images }}">
-          <br>
+        </div>
+
+          <button type="button" id="add-new-image">Add New Image</button>
+
           <br>
           Pen Name:
           <input type="text" name="pen_name" value="{{ pen.pen_title }}">
@@ -141,6 +126,9 @@
         </form>
     </div>
     <script>
+      $('#add-new-image').click(function() {
+          $('#images').append('<br>Pen Image URL:<input type="text" name="images"> <br><br>');
+      });
       $('.update_pen_form').hide();
 
     
