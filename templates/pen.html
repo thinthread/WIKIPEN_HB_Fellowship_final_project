@@ -25,7 +25,7 @@
     </form>
     <br> -->
 
-    <a href= "/show_search_results?brand_name={{ session['search']}}">Back to Search Reasults</a>
+    <a href= "/show_search_results?brand_name={{ session['search']}}">Back to Search Results</a>
 
 
 
@@ -36,13 +36,6 @@
    
     <button id="show_form" type='submit' value='Submit'>Edit Pen Post</button>
     <br>
- <!--    <br>
-    <form id="pen_post" action="/pen_posts" method="GET">
-        <button type='submit' value='Submit'>Previous Page</button>    
-    </form>
-    <br>   -->
-
-   
     <br>
     <form id="logout"action="/logout" method="POST">
         <button type='submit' value='Submit'>Logout</button>    
@@ -68,9 +61,8 @@
           <br>
           {% endfor %}
         </div>
-
           <button type="button" id="add-new-image">Add New Image</button>
-
+          <br>
           <br>
           Pen Name:
           <input type="text" name="pen_name" value="{{ pen.pen_title }}">
@@ -131,12 +123,9 @@
       });
       $('.update_pen_form').hide();
 
-    
         $('#show_form').click(function(){
           $('.update_pen_form').show();
         });
-
-
     </script>
 
     {% endif %}

@@ -5,18 +5,17 @@
     <h2>Please fill out the following fields to create your post!</h2>
 
     <form action ="/create_pen_post_form" method="POST" enctype="multipart/form-data">
-      Pen Image URL-1:
-      <input type="text" name="image_1"> 
-      <br>
-      <!-- Image-2: -->
-      <br>
-      Pen Image URL-2:
-      <input type="text" name="image_2">
-      <br>
-      <br>
-      <!-- Image-3: -->
-      Pen Image URL-3:
-      <input type="text" name="image_3">
+      <input type="text" name="pen_id" hidden>
+  
+      <div id="images">
+        <br>
+        Pen Image URL:
+        <input type="text" name="images"> 
+        <br>
+        <br>
+      </div>
+
+      <button type="button" id="add-new-image">Add New Image</button>
       <br>
       <br>
       Pen Name:
@@ -70,8 +69,12 @@
       <br>
       <br>
       <button type='submit' value='Submit'>Submit</button>
-
     </form>
+    <script>
+      $('#add-new-image').click(function() {
+          $('#images').append('<br>Pen Image URL:<input type="text" name="images"> <br><br>');
+      });
+    </script>
 
 {% endblock %}
 

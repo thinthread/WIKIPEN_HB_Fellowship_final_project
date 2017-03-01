@@ -31,11 +31,11 @@
     <br>
 
     {% if 'login' in session %}
-
-      <form id="pen_post" action="/pen_posts" method="GET">
-          <button type='submit' value='Submit'>Previous Page</button>    
+      <form action="/create_pen_post_form" method="POST">
+        <button type="submit">Create New Pen</button>
       </form>
-      <br> 
+
+      <br>
 
       <form id="logout"action="/logout" method="POST">
         <button type='submit' value='Submit'>Logout</button>    

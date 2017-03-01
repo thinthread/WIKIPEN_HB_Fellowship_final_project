@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
-
+from sqlalchemy import func
 
 db = SQLAlchemy()
 
@@ -37,6 +36,7 @@ class StockPen(db.Model):
     general_info = db.Column(db.String(2000))
     pen_category = db.Column(db.String(20))
     pen_version = db.Column(db.String(20))
+    last_time = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.current_timestamp())
     # image_id = db.Column(db.Integer, db.ForeignKey("images.image_id"))
     # event_log_id = db.Column(db.Integer, db.ForeignKey("event.event_log_id"))
 

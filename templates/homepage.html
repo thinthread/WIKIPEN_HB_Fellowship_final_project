@@ -3,11 +3,20 @@
 
 <h1>This is the home page</h1>
 
-<h2></h2>
 
+{% if 'login' in session %}
+<h2>Welcome</h2>
+<br>
+<form action="/create_pen_post_form" method="POST">
+    <button type="submit">Create New Pen</button>
+</form>
 
+<br>
+<form action="/logout" method="GET">
+    <button type="submit">Logout</button>
+</form>
+{% else %}
 <h2>User login here</h2>
-
 
 <form id="reigster" action="/register_form"> 
     <button type='submit' value='Submit'>Create New Account</button>
@@ -16,12 +25,17 @@
 <form id="login" action="/login_form"> 
     <button type='submit' value='Submit'>Existing Accounts</button>
 </form>
+
+{% endif %}
+
 <br>
 <form action ="/show_search_results" method="GET">
   Search by brand name:
   <input type="text" name="brand_name">
   <button type='submit' value='Submit'>Search</button>
 </form>
+
+
 
 {% endblock %}
 

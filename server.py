@@ -1,28 +1,29 @@
 from jinja2 import StrictUndefined
 
-import os
-from flask import Flask, request, redirect, url_for
-from werkzeug.utils import secure_filename
-from werkzeug import SharedDataMiddleware
+# import os
+from flask import Flask, request, redirect  # ,url_for
+# from werkzeug.utils import secure_filename
+# from werkzeug import SharedDataMiddleware
 # from werkzeug import secure_filename
 
 
-from flask import send_from_directory
+# from flask import send_from_directory
 from flask_sse import sse
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
-from flask import Flask, Request
+# from flask import Flask, Request
 
 
 from model import (User, StockPen, Image, connect_to_db, db)
                     # EventLog, ,
 
 
-import uuid   # for random file name uploads
+# import uuid   # for random file name uploads
 # import json
 # from model import connect_to_db, db
 from sqlalchemy import or_
+from sqlalchemy import func
 
 # import gcs_client
 # from google.cloud import storage
@@ -75,9 +76,9 @@ DebugToolbarExtension(app)
 # assert result.text == "7"
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# def allowed_file(filename):
+#     return '.' in filename and \
+#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -142,7 +143,7 @@ def login():
         if user_info.password == password:
             flash("Successfully logged in!")
             session["login"] = user_info.user_id_email
-            return redirect("/pen_posts")
+            return redirect("/")
 
         else:
             flash("Wrong Password")
@@ -171,15 +172,6 @@ def logout():
     return redirect("/")
 
 
-@app.route("/pen_posts")
-def pen_posts():
-    """Page that shows all posts about pens"""
-
-    # users = User.query.all()
-    login = session.get('login')
-    return render_template("pen_posts.html", login=login)
-
-
 # UPLOAD_FOLDER = '/path/to/the/uploads'
 # ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 # #######   disallow .php files if the server executes them, but who has PHP installed on their server
@@ -189,29 +181,88 @@ def pen_posts():
 def create_pen_post_form():
     """Create new pen post form"""
 
-    image_1 = request.form.get("image_1")
-    image_2 = request.form.get("image_2")
-    image_3 = request.form.get("image_3")
-    pen_name = request.form.get("pen_name")
-    brand_name = request.form.get("brand_name")
-    production_start_year = request.form.get("production_start_year")
-    production_end_year = request.form.get("production_end_year")
-    pen_production_version = request.form.get("pen_production_version")
-    general_info = request.form.get("general_info")
-    pen_type = request.form.get("pen_type")
-
-    s_pen_id = request.form.get("pen_id")
-
     login = session.get('login')
 
-    # pen_to_add = StockPen.query.get(int(s_pen_id))
-
-
-
+    pen_name = request.form.get("pen_name")
 
     if pen_name:
 
-        _pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
+        pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
+
+        if pen:
+                flash("Sorry that specific pen name has already been created. \
+                       Please choose another another. Thank you!")
+
+                return redirect("/create_pen_post_form")
+
+        else:
+
+        # flash("Sorry , you must fill out a pen name on this more. Thank you!")
+        # return redirect("/create_pen_post_form")
+
+            form_images = request.form.getlist("images")
+
+            brand_name = request.form.get("brand_name")
+            production_start_year = request.form.get("production_start_year")
+            production_end_year = request.form.get("production_end_year")
+            pen_production_version = request.form.get("pen_production_version")
+            general_info = request.form.get("general_info")
+            pen_type = request.form.get("pen_type")
+
+            new_pen_post = StockPen(pen_title=pen_name,
+                                    manufacturer=brand_name,
+                                    start_year=production_start_year,
+                                    end_year=production_end_year,
+                                    pen_version=pen_production_version,
+                                    general_info=general_info,
+                                    pen_category=pen_type)
+
+            db.session.add(new_pen_post)
+            #db.session.flush()
+
+            for new_img in form_images:
+                new_image = Image(image_url=new_img, pen=new_pen_post)
+                db.session.add(new_image)
+
+            db.session.commit()
+
+            sse.publish({"image_url": new_pen_post.images[0].image_url,
+                         "id": new_pen_post.s_pen_id,
+                         "brand_name": brand_name,
+                         "start_year": production_start_year,
+                         "name": pen_name}, type='edit')
+
+            flash("You have successfully created a new pen post!")
+            return redirect("/pens/%s" % new_pen_post.s_pen_id)
+
+    else:
+
+        return render_template("create_pen_post_form.html", login=login)
+
+    # import pdb
+    # pdb.set_trace()
+    # pen_to_add = StockPen.query.get(int(s_pen_id))
+    # pen_to_update = StockPen.query.get(Image.s_pen_id)
+
+
+
+    # if pen_name:
+
+    #     if img_to_add:   # item in db
+
+
+    # sse.publish({"image_url": pen.images[0].image_url,
+    #          "id": s_pen_id,
+    #          "brand_name": brand_name,
+    #          "start_year": production_start_year,
+    #          "name": pen_name}, type='edit')
+
+    # return redirect("/pens/%s" % s_pen_id)
+
+
+    # pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
+
+
         # pen_images = db.session.query(Image.s_pen_id).filter_by(or_(pen=s_pen_id)).all()
 
         # if request.method == 'POST':
@@ -233,14 +284,6 @@ def create_pen_post_form():
         #         logging.exception(e)
         #         return jsonify({"success": False})
 
-        if _pen:
-
-            flash("Sorry that specific pen name has already been created. \
-                   Please choose another another. Thank you!")
-
-            return redirect("/create_pen_post_form")
-
-        else:
 
             # if _pen:
             #     if request.method == 'POST':
@@ -288,38 +331,10 @@ def create_pen_post_form():
         #         print "Image uploaded to: "
         #         print url
 
-            new_pen_post = StockPen(pen_title=pen_name,
-                                    manufacturer=brand_name,
-                                    start_year=production_start_year,
-                                    end_year=production_end_year,
-                                    pen_version=pen_production_version,
-                                    general_info=general_info,
-                                    pen_category=pen_type)
-
-            new_image_1 = Image(image_url=image_1, pen=s_pen_id)
-            new_image_2 = Image(image_url=image_2, pen=s_pen_id)
-            new_image_3 = Image(image_url=image_3, pen=s_pen_id)
-
-            db.session.add(new_pen_post)
-            db.session.add(new_image_1)
-            db.session.add(new_image_2)
-            db.session.add(new_image_3)
-            db.session.commit()
-
-            flash("You have successfully created a new pen post!")
-            return render_template("/pen_posts.html", login=login)
-
-    else:
-
-        return render_template("create_pen_post_form.html", login=login)
-
-
 @app.route("/update_pen", methods=['POST'])
 def update_pen():
 
     form_images = request.form.getlist("images")
-    print "form images:"
-    print form_images
 
     pen_name = request.form.get("pen_name")
     brand_name = request.form.get("brand_name")
@@ -332,39 +347,13 @@ def update_pen():
     s_pen_id = int(request.form.get("pen_id"))
 
     pen_to_update = StockPen.query.get(s_pen_id)
-    print "pen to update:"
-    print pen_to_update
-    print pen_to_update.images
 
-    # query pen to update via s_pen_id
-
-    # # query returns list of iamges via s_pen_id
     for img_update in map(None, pen_to_update.images, form_images):
         if img_update[0] is None:
-            # create new image
-            print "Creating new image"
             new_image = Image(image_url=img_update[1], pen=pen_to_update)
             db.session.add(new_image)
         elif img_update[0].image_url != img_update[1]:
             img_update[0].image_url = img_update[1]
-
-    #for image in images_to_update:
-    #    if pen_to_update.images[0].image_url == image_1:
-    #        new_image_1 = Image(image_url=image_1, pen=s_pen_id)
-
-        # 3 urls, for this pen does this pen image already exist?
-        # query, list of images via pen_to_upadate.images (back_ref) ... all the imaages'
-                # pen_to_update.images[0].image_url == image_1, if it does !=
-                    #pen_to_update.images[0].image_url. = image_1
-                # same for image 2 and three,
-
-        # list of oject loop through, if url in list do nothing, if not in list, add
-        # 3 things,
-           # check them in order, the order that the images come out is the same as the way we query psql
-           # anything in our eisting list that is not in the new list should get tossed,
-           # anthing that mathes we do nothing
-           # anything int he new list that is not in the existing list gets added
-           # if in list, they stay in order and compair back html form
 
     pen_to_update.pen_title = pen_name
     pen_to_update.manufacturer = brand_name
@@ -418,23 +407,29 @@ def pen(pen_id):
     return render_template("pen.html", pen=pen)
 
 
+@app.route("/last_modified", methods=["GET"])
+def last_modified():
+
+    pens = StockPen.query.order_by(StockPen.last_time.desc()).limit(5)
+    nameurl = []
+    for pen in pens:
+        nameurl.append({"name": pen.pen_title,
+                        "image_url": pen.images[0].image_url})
+    return jsonify(nameurl)
+
+
 @app.route("/show_search_results")
 def show_search_results():
     """Search and retrieve data for user to see post"""
 
-    # pen_title = StockPen.query.get(2)
-
-    # return render_template("show_search_results.html", pen_title=pen_title)
-
-    search = request.args.get("brand_name")  # manufacturer
+    search = request.args.get("brand_name").lower()  # manufacturer
     session['search'] = search
 
-    #pens = StockPen.query.filter_by(manufacturer=search).all()
     pens = StockPen.query.filter(or_(
-        StockPen.manufacturer.contains(search),
-        StockPen.pen_version.contains(search),
-        StockPen.pen_category.contains(search),
-        StockPen.pen_title.contains(search))).all()
+        func.lower(StockPen.manufacturer).contains(search),
+        func.lower(StockPen.pen_version).contains(search),
+        func.lower(StockPen.pen_category).contains(search),
+        func.lower(StockPen.pen_title).contains(search))).all()
 
     return render_template("show_search_results.html", pens=pens)
 
@@ -445,4 +440,3 @@ if __name__ == "__main__":
 
 # to run gunicorn server
 # gunicorn server:app --worker-class gevent --bind 0.0.0.0:5000 --reload --graceful-timeout 3
-

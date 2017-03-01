@@ -23,16 +23,35 @@
 <div id="stream">
 </div>
     <script>
-        var source = new EventSource("{{ url_for('sse.stream') }}");
-        source.addEventListener('edit', function(event) {
-            var data = JSON.parse(event.data);
+        $(document).ready(function() {
+            $.get("/last_modified", function(alldata) {
+                console.log(alldata);
+                for (var i = 0; i < alldata.length; i++) {
+                    var data = alldata[i];
+                    $('#stream').append('<div>' + data['name'] + '<img src="' +
+                    data['image_url'] + '"></img></div>');
 
-            $('#stream').prepend('<div>pen, id: ' + data['id'] + 
-                ' name:' + data['name'] +
-                'image_url:' + pen_to_update.images[0].image_url +
-                ' rest: ' + event.data +
-                '</div>');
-        }, false);
+                }
+            });
+
+
+
+            var source = new EventSource("{{ url_for('sse.stream') }}");
+            source.addEventListener('edit', function(event) {
+                var data = JSON.parse(event.data);
+
+                $('#stream').prepend('<div>' + data['name'] + '<img src="' +
+                    data['image_url'] + '"></img></div>'
+                    );
+                }, false);
+
+            // $('#stream').prepend('<div>pen, id: ' + data['id'] + 
+            //     ' name:' + data['name'] +
+            //     'image_url:' + data['image_url'] +
+            //     ' rest: ' + event.data +
+            //     '</div>');
+
+        });
     </script>
 </body>
 

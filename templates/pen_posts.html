@@ -1,7 +1,7 @@
 
 {% extends 'base.html' %}
 {% block content %}
-    {% if login in session %}
+    {% if "login" in session %}
       <h3>IN SESSION</h3>
     {% endif %}
     <h2>Pen Post Page</h2>
