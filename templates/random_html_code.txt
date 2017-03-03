@@ -19,3 +19,28 @@
     <form id="logout"action="/logout" method="POST">
       <button type='submit' value='Submit'>Logout</button>    
     </form>
+
+
+
+
+
+
+
+      <!--     <br> 
+    <form action ="/show_search_results?brand_name={{ session['search']}}" method="GET">
+        <button type='submit' value='Submit'>Previous Page</button>    
+    </form>
+    <br> -->
+
+
+
+    Turn search results into a link - pass in url object
+      {% for pen in pens %}
+      <!-- pass get url object -->
+        <li>
+            <a href="{{pen.get_url()}}">
+              Pen Link: {{pen.pen_title}}
+            </a> 
+
+        </li>
+      {% endfor %}

@@ -6,18 +6,14 @@ from flask import Flask, request, redirect  # ,url_for
 # from werkzeug import SharedDataMiddleware
 # from werkzeug import secure_filename
 
-
-# from flask import send_from_directory
+from flask import send_from_directory
 from flask_sse import sse
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
 # from flask import Flask, Request
 
-
-from model import (User, StockPen, Image, connect_to_db, db)
-                    # EventLog, ,
-
+from model import (User, StockPen, Image, EventLog, connect_to_db, db)
 
 # import uuid   # for random file name uploads
 # import json
@@ -38,7 +34,6 @@ app.config["REDIS_URL"] = "redis://localhost"
 # sse = server-sent events.
 app.register_blueprint(sse, url_prefix='/stream')
 
-
 # # Normally, if you use an undefined variable in Jinja2, it fails
 # # silently. This is horrible. Fix this so that, instead, it raises an
 # # error.
@@ -54,9 +49,7 @@ connect_to_db(app)
     # Use the DebugToolbar
 DebugToolbarExtension(app)
 
-
 ########################### VIEWS ###############################
-
 
 # browser = webdriver.Firefox()
 # driver = webdriver.Chrome(executable_path=r"C:\Chrome\chromedriver.exe")
@@ -171,7 +164,6 @@ def logout():
 
     return redirect("/")
 
-
 # UPLOAD_FOLDER = '/path/to/the/uploads'
 # ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 # #######   disallow .php files if the server executes them, but who has PHP installed on their server
@@ -195,10 +187,12 @@ def create_pen_post_form():
 
                 return redirect("/create_pen_post_form")
 
-        else:
+        elif pen_name is None:
 
-        # flash("Sorry , you must fill out a pen name on this more. Thank you!")
-        # return redirect("/create_pen_post_form")
+            flash("Sorry , you must fill out a pen name on this more. Thank you!")
+            return redirect("/create_pen_post_form")
+
+        else:
 
             form_images = request.form.getlist("images")
 
@@ -218,12 +212,18 @@ def create_pen_post_form():
                                     pen_category=pen_type)
 
             db.session.add(new_pen_post)
-            #db.session.flush()
 
             for new_img in form_images:
                 new_image = Image(image_url=new_img, pen=new_pen_post)
                 db.session.add(new_image)
 
+            db.session.flush()
+
+            new_user = login
+
+            new_event = EventLog(user_id_email=new_user, s_pen_id=new_pen_post.s_pen_id)
+
+            db.session.add(new_event)
             db.session.commit()
 
             sse.publish({"image_url": new_pen_post.images[0].image_url,
@@ -241,29 +241,11 @@ def create_pen_post_form():
 
     # import pdb
     # pdb.set_trace()
-    # pen_to_add = StockPen.query.get(int(s_pen_id))
-    # pen_to_update = StockPen.query.get(Image.s_pen_id)
-
-
 
     # if pen_name:
 
     #     if img_to_add:   # item in db
 
-
-    # sse.publish({"image_url": pen.images[0].image_url,
-    #          "id": s_pen_id,
-    #          "brand_name": brand_name,
-    #          "start_year": production_start_year,
-    #          "name": pen_name}, type='edit')
-
-    # return redirect("/pens/%s" % s_pen_id)
-
-
-    # pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
-
-
-        # pen_images = db.session.query(Image.s_pen_id).filter_by(or_(pen=s_pen_id)).all()
 
         # if request.method == 'POST':
         #     file = request.files['file']
@@ -395,14 +377,12 @@ def update_pen():
         #     '/uploads':  app.config['UPLOAD_FOLDER']
 # })
 
-
 @app.route("/pens/<int:pen_id>", methods=["GET"])
 def pen(pen_id):
     """Render single pen, show detail, hidden option to update pen detail"""
 
     pen = StockPen.query.get(pen_id)
 
-    print pen.images
 
     return render_template("pen.html", pen=pen)
 
@@ -410,11 +390,12 @@ def pen(pen_id):
 @app.route("/last_modified", methods=["GET"])
 def last_modified():
 
-    pens = StockPen.query.order_by(StockPen.last_time.desc()).limit(5)
+    events = EventLog.query.order_by(EventLog.last_time.desc()).limit(5).all()
+
     nameurl = []
-    for pen in pens:
-        nameurl.append({"name": pen.pen_title,
-                        "image_url": pen.images[0].image_url})
+    for event in events:
+        nameurl.append({"name": event.pen.pen_title,
+                        "image_url": event.pen.images[0].image_url})
     return jsonify(nameurl)
 
 

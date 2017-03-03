@@ -14,27 +14,25 @@
     {% for flash in get_flashed_messages() %}
         {{ flash }}
     {% endfor %}
-
-
+    <br>
 
 
     {% block content %} put your content here {% endblock %}
 
 <div id="stream">
+    <h3>WIKIPEN Posts:</h3>
 </div>
     <script>
         $(document).ready(function() {
-            $.get("/last_modified", function(alldata) {
-                console.log(alldata);
-                for (var i = 0; i < alldata.length; i++) {
-                    var data = alldata[i];
-                    $('#stream').append('<div>' + data['name'] + '<img src="' +
+            $.get("/last_modified", function(allData) {
+                console.log(allData);
+                for (var i = 0; i < allData.length; i++) {
+                    var data = allData[i];
+                    $('#stream').append('<div>' + data['name'] + '<br><img src="' +
                     data['image_url'] + '"></img></div>');
 
                 }
             });
-
-
 
             var source = new EventSource("{{ url_for('sse.stream') }}");
             source.addEventListener('edit', function(event) {
@@ -45,15 +43,9 @@
                     );
                 }, false);
 
-            // $('#stream').prepend('<div>pen, id: ' + data['id'] + 
-            //     ' name:' + data['name'] +
-            //     'image_url:' + data['image_url'] +
-            //     ' rest: ' + event.data +
-            //     '</div>');
-
         });
     </script>
 </body>
-
-
 </html>
+
+

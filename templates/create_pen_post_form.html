@@ -69,12 +69,27 @@
       <br>
       <br>
       <button type='submit' value='Submit'>Submit</button>
+      </form>
+      <script>
+        $('#add-new-image').click(function() {
+            $('#images').append('<br>Pen Image URL:<input type="text" name="images"> <br><br>');
+        });
+      </script>
+      <br>
+      <br>
+      <form action ="/show_search_results" method="GET">
+        Search by brand name:
+        <input type="text" name="brand_name">
+        <button type='submit' value='Submit'>Search</button>
+      </form>
+    <br>
+    <form action="/logout" method="GET">
+    <button type="submit">Logout</button>
     </form>
-    <script>
-      $('#add-new-image').click(function() {
-          $('#images').append('<br>Pen Image URL:<input type="text" name="images"> <br><br>');
-      });
-    </script>
+    <br>
+    <br>
+
+
 
 {% endblock %}
 
