@@ -189,7 +189,7 @@ def create_pen_post_form():
 
         elif pen_name is None:
 
-            flash("Sorry , you must fill out a pen name on this more. Thank you!")
+            flash("Sorry , you must fill out a pen name on this form. Thank you!")
             return redirect("/create_pen_post_form")
 
         else:
@@ -352,6 +352,16 @@ def update_pen():
         pen_to_update.end_year = int(production_end_year)
     else:
         pen_to_update.end_year = None
+
+    db.session.flush()
+
+    login = session.get('login')
+
+    new_user = login
+
+    new_event = EventLog(user_id_email=new_user, s_pen_id=pen_to_update.s_pen_id)
+
+    db.session.add(new_event)
 
     db.session.commit()
 
