@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
-from datetime import datetime
+# from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -37,13 +37,12 @@ class StockPen(db.Model):
     general_info = db.Column(db.String(2000))
     pen_category = db.Column(db.String(20))
     pen_version = db.Column(db.String(20))
-    # last_time = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.current_timestamp())
+    last_time = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.current_timestamp())
 
     def get_url(self):
         return "/pens/%s" % self.s_pen_id
 
     def __repr__(self):
-
         return "<StockPen pen_title=%s manufacturer=%s start_year=%s end_year=%s \
                  general_info=%s pen_category=%s pen_version=%s>" % (self.pen_title,
                                                                      self.manufacturer,
@@ -52,7 +51,6 @@ class StockPen(db.Model):
                                                                      self.general_info,
                                                                      self.pen_category,
                                                                      self.pen_version)
-                                                                     # self.event_log_id,
 
 
 class EventLog(db.Model):
@@ -61,18 +59,15 @@ class EventLog(db.Model):
     __tablename__ = "event"
 
     event_log_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    # date_time = db.Column(db.String(300), nullable=False)
     last_time = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.current_timestamp())
     user_id_email = db.Column(db.String(20), db.ForeignKey("users.user_id_email"))
-    s_pen_id = db.Column(db.Integer, db.ForeignKey("pens.s_pen_id"))
-
+    s_pen_id = db.Column(db.Integer, db.ForeignKey("pens.s_pen_id"), index=True)
 
     user = db.relationship("User", backref=db.backref("events"))
 
     pen = db.relationship("StockPen", backref=db.backref("events"))
 
     def __repr__(self):
-
         return "<EventLog last_time=%s user_id_email=%s s_pen_id=%s>" % (self.last_time,
                                                                          self.user_id_email,
                                                                          self.s_pen_id)
@@ -90,7 +85,6 @@ class Image(db.Model):
     pen = db.relationship("StockPen", backref=db.backref("images"), order_by=image_id)
 
     def __repr__(self):
-
         return"<Images image_url=%s s_pen_id=%s>" % (self.image_url,
                                                      self.s_pen_id)
 

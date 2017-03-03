@@ -20,6 +20,7 @@ from model import (User, StockPen, Image, EventLog, connect_to_db, db)
 # from model import connect_to_db, db
 from sqlalchemy import or_
 from sqlalchemy import func
+from sqlalchemy import distinct
 
 # import gcs_client
 # from google.cloud import storage
@@ -116,7 +117,7 @@ def register():
 
 @app.route("/login_form", methods=["GET"])
 def display_login_form():
-    """Display lonin form"""
+    """Display login form"""
 
     return render_template("login_form.html")
 
@@ -393,19 +394,28 @@ def pen(pen_id):
 
     pen = StockPen.query.get(pen_id)
 
+    emails = [x.user_id_email for x in pen.events]
 
-    return render_template("pen.html", pen=pen)
+    return render_template("pen.html", pen=pen, contributors=set(emails))
 
 
 @app.route("/last_modified", methods=["GET"])
 def last_modified():
 
-    events = EventLog.query.order_by(EventLog.last_time.desc()).limit(5).all()
+    # events = db.session.query(
+    #     EventLog.query.distinct(EventLog.s_pen_id).order_by(EventLog.s_pen_id,EventLog.last_time).subquery()
+    #     ).order_by(EventLog.last_time.desc()).limit(5)
+    # events = db.session.query(EventLog.s_pen_id,
+    #     func.max(EventLog.last_time),
+    #     func.max(Image.image_url)).join(Image.s_pen_id).group_by(EventLog.s_pen_id).order_by(func.max(EventLog.last_time.desc()))
+
+    pens = StockPen.query.order_by(StockPen.last_time.desc()).limit(5)
 
     nameurl = []
-    for event in events:
-        nameurl.append({"name": event.pen.pen_title,
-                        "image_url": event.pen.images[0].image_url})
+    for pen in pens:
+        nameurl.append({"name": pen.pen_title,
+                        "id": pen.s_pen_id,
+                        "image_url": pen.images[0].image_url})
     return jsonify(nameurl)
 
 

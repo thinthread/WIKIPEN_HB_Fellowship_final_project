@@ -24,12 +24,20 @@
 </div>
     <script>
         $(document).ready(function() {
+            var makeEntry = function(data) {
+                return '<div><div><a href="/pens/' + data['id'] + '">' +
+                    data['name'] +
+                    '</a></div><div><img src="' + data['image_url'] + 
+                    '"></img></div></div>';
+            };
+
             $.get("/last_modified", function(allData) {
                 console.log(allData);
                 for (var i = 0; i < allData.length; i++) {
                     var data = allData[i];
-                    $('#stream').append('<div>' + data['name'] + '<br><img src="' +
-                    data['image_url'] + '"></img></div>');
+                    $('#stream').append(makeEntry(data));
+                    //$('#stream').append('<div>' + data['name'] + '<br><img src="' +
+                    //data['image_url'] + '"></img></div>');
 
                 }
             });
@@ -38,9 +46,10 @@
             source.addEventListener('edit', function(event) {
                 var data = JSON.parse(event.data);
 
-                $('#stream').prepend('<div>' + data['name'] + '<img src="' +
-                    data['image_url'] + '"></img></div>'
-                    );
+                $('#stream').prepend(makeEntry(data));
+                    //'<div>' + data['name'] + '<img src="' +
+                    //data['image_url'] + '"></img></div>');
+                    
                 }, false);
 
         });

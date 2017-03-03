@@ -2,17 +2,26 @@
 {% block content %}
 
           
+    <div>
     {% for pen in pen.images %}
-    <img type="file" src="{{ pen.image_url }}">
-    {% endfor %}<br>
-    Pen Name: {{ pen.pen_title }}<br>
-    Brand Name: {{ pen.manufacturer }}<br>
-    Production Start Year: {{ pen.start_year }}<br> 
-    Production End Year: {{ pen.end_year }}<br>
-    Pen Production Version: {{ pen.pen_version }}<br>
-    Pen Type: {{ pen.pen_category }}<br>
-    General Info: {{ pen.general_info }}<br>
+    <div><img type="file" src="{{ pen.image_url }}"></div>
+    {% endfor %}
+    <div>Pen Name: {{ pen.pen_title }}</div>
+    <div>Brand Name: {{ pen.manufacturer }}</div>
+    <div>Production Start Year: {{ pen.start_year }}</div> 
+    <div>Production End Year: {{ pen.end_year }}</div>
+    <div>Pen Production Version: {{ pen.pen_version }}</div>
+    <div>Pen Type: {{ pen.pen_category }}</div>
+    <div>General Info: {{ pen.general_info }}</div>
 
+    <div style="border-style:solid;border-width: 1pt;max-width:20%;"><span style="text-decoration:underline;">Contributors</span>
+      {% for user in contributors %}
+      <div>{{ user }}</div>
+      {% endfor %}
+    </div>
+
+    </div>
+    
     <br>
     <br>
     <form id="home_page" action="/" method="GET">
