@@ -3,57 +3,101 @@
 
 <head>
     <title>WIKIPEN</title>
-    <script src="https://code.jquery.com/jquery.js"></script>
+    <!--<script src="https://code.jquery.com/jquery.js"></script>-->
+    <!-- Latest compiled and minified CSS -->
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+      <link href="/static/project.css" rel="stylesheet">
+      <!-- jQuery library -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+      <!-- Latest compiled JavaScript -->
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+      <meta name="viewport" content="width=device-width, initial-scale=1">
 
 </head>
 
 <body>
-    Hello there. You have reached WIKIPEN!
-    <hr>
+        <nav class="navbar navbar-inverse navbar-fixed-top invisible">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">WIKIPEN</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
 
-    {% for flash in get_flashed_messages() %}
-        {{ flash }}
-    {% endfor %}
-    <br>
+<div class="container-fluid">
+
+
+
+<!--     <div class="container-fluid"> NAVBAR HERE </div>
+        <div class="container">
+        <div class="row">
+        <div class="col-xs-12"> MAIN CONTENT HERE </div>
+        </div>
+    </div> -->
+ 
+
+        {% for flash in get_flashed_messages() %}
+        <div class="row">
+            <div class="col-md-6 alert alert-info" role="alert">
+            {{ flash }}
+        </div>
+        </div>
+        {% endfor %}
 
 
     {% block content %} put your content here {% endblock %}
 
-<div id="stream">
-    <h3>WIKIPEN Posts:</h3>
-</div>
-    <script>
-        $(document).ready(function() {
-            var makeEntry = function(data) {
-                return '<div><div><a href="/pens/' + data['id'] + '">' +
-                    data['name'] +
-                    '</a></div><div><img src="' + data['image_url'] + 
-                    '"></img></div></div>';
-            };
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3"> 
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Recent WIKIPEN Posts:</h3>
+                    </div>
+                    <div class="panel-body" id="stream">
+                <!-- js inserts new dom elements here -->
+            </div></div>
+        </div>
+    </div>
+</div> <!-- end container -->
 
-            $.get("/last_modified", function(allData) {
-                console.log(allData);
-                for (var i = 0; i < allData.length; i++) {
-                    var data = allData[i];
-                    $('#stream').append(makeEntry(data));
-                    //$('#stream').append('<div>' + data['name'] + '<br><img src="' +
-                    //data['image_url'] + '"></img></div>');
-
-                }
-            });
-
-            var source = new EventSource("{{ url_for('sse.stream') }}");
-            source.addEventListener('edit', function(event) {
-                var data = JSON.parse(event.data);
-
-                $('#stream').prepend(makeEntry(data));
-                    //'<div>' + data['name'] + '<img src="' +
-                    //data['image_url'] + '"></img></div>');
-                    
-                }, false);
-
+<script>
+    $(document).ready(function() {
+        var makeEntry = function(data) {
+            return '<div class="panel panel-default"><div class="panel-heading"><a href="/pens/' + data['id'] + '" class="panel-title">' +
+            data['name'] + '</a></div>' +
+            '<div class="panel-body">' +
+            '<a href="/pens/' + data['id'] + '"><img class="img-responsive center-block" src="' + data['image_url'] + 
+                '"></img></a></div></div>';
+        };
+        $.get("/last_modified", function(allData) {
+            console.log(allData);
+            for (var i = 0; i < allData.length; i++) {
+                var data = allData[i];
+                $('#stream').append(makeEntry(data));
+            }
         });
-    </script>
+        var source = new EventSource("{{ url_for('sse.stream') }}");
+        source.addEventListener('edit', function(event) {
+            var data = JSON.parse(event.data);
+            $('#stream').prepend(makeEntry(data));
+            }, false);
+    });
+</script>
 </body>
 </html>
 

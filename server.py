@@ -75,7 +75,7 @@ DebugToolbarExtension(app)
 #            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 def index():
     """Homepage."""
 
@@ -170,7 +170,7 @@ def logout():
 # #######   disallow .php files if the server executes them, but who has PHP installed on their server
 
 
-@app.route("/create_pen_post_form", methods=["POST"])
+@app.route("/create_pen_post_form", methods=["POST", "GET"])
 def create_pen_post_form():
     """Create new pen post form"""
 
@@ -419,12 +419,12 @@ def last_modified():
     return jsonify(nameurl)
 
 
-@app.route("/show_search_results")
+@app.route("/show_search_results", methods=["GET"])
 def show_search_results():
     """Search and retrieve data for user to see post"""
 
     search = request.args.get("brand_name").lower()  # manufacturer
-    session['search'] = search
+    session["search"] = search
 
     pens = StockPen.query.filter(or_(
         func.lower(StockPen.manufacturer).contains(search),
@@ -441,3 +441,4 @@ if __name__ == "__main__":
 
 # to run gunicorn server
 # gunicorn server:app --worker-class gevent --bind 0.0.0.0:5000 --reload --graceful-timeout 3
+

@@ -6,27 +6,27 @@
     {% endif %}
     <h2>Pen Post Page</h2>
  
+<!--     <br>
     <br>
     <br>
     <br>
     <br>
     <br>
     <br>
-    <br>
-    <br>
-    <form action ="/show_search_results" method="GET">
-      Search by brand name:
-      <input type="text" name="brand_name">
-      <button type='submit' value='Submit'>Search</button>
-    </form>
-    <br>
-    <form id="create" action="/create_pen_post_form" method="POST"> 
-        <button type='submit' value='Submit'>Create New Post</button>
-    </form>
-    <br>
-    <form id="logout"action="/logout" method="POST">
-        <button type='submit' value='Submit'>Logout</button>    
-    </form>
+    <br> -->
+    <div>
+        <form action ="/show_search_results" method="GET">
+            <p>Search by brand name:<input type="text" name="brand_name">
+                <button type='submit' value='Submit'>Search</button>
+            </p>
+        </form>
+        <form id="create" action="/create_pen_post_form" method="POST"> 
+            <p><button type='submit' value='Submit'>Create New Post</button></p>
+        </form>
+        <form id="logout"action="/logout" method="POST">
+            <p><button type='submit' value='Submit'>Logout</button></p>    
+        </form>
+    </div>
 
 
 {% endblock %}

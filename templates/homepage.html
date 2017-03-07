@@ -1,45 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>This is the home page</h1>
+<!-- <h1>This is the home page</h1> -->
 
+<div class="row">
+    <div class="col-md-6 col-md-offset-1">
 
 {% if 'login' in session %}
-<h2>Welcome</h2>
-<br>
-<form action="/create_pen_post_form" method="POST">
-    <button type="submit">Create New Pen</button>
-</form>
-
-<br>
-<form action="/logout" method="GET">
-    <button type="submit">Logout</button>
-</form>
-
+    <h1><a type="submit" href="/create_pen_post_form" class="btn btn-lg btn-default">Create New Pen</a></h1>
+    <h1><a href="/logout" class="btn btn-lg btn-default">Logout</a></h1>
 {% else %}
-<h2>User login here</h2>
-
-<form id="reigster" action="/register_form"> 
-    <button type='submit' value='Submit'>Create New Account</button>
-</form>
-<br>
-<form id="login" action="/login_form"> 
-    <button type='submit' value='Submit'>Existing Accounts</button>
-</form>
-
+    <h1><a href="/register_form" class="btn btn-lg btn-default">Create New Account</a></h1>
+    <h1><a href="/login_form" class="btn btn-lg btn-default">Existing Accounts</a></h1>
 {% endif %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-md-offset-1">
+            <div class="panel panel-default"><div class="panel-body">
+        <form action="/show_search_results" method="GET">
+                <label for="brand_name">
+                Search by brand name:</label>
+              <input type="text" name="brand_name">
+              <button type="submit" value="Submit" class="btn btn-default">Search</button>
+        </form>
+    </div></div>
+    </div>
+</div>
 
-<br>
-<form action ="/show_search_results" method="GET">
-  Search by brand name:
-  <input type="text" name="brand_name">
-  <button type='submit' value='Submit'>Search</button>
-</form>
-<br>
-<br>
-
-
-
+<!-- <form action="/logout" method="GET">
+    <button type="submit">Logout</button>
+</form> -->
 
 {% endblock %}
 

@@ -2,94 +2,88 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Please fill out the following fields to create your post!</h2>
+  <div class="row">
+    <div class="col-md-6">
+          <div class="panel panel-default">
 
-    <form action ="/create_pen_post_form" method="POST" enctype="multipart/form-data">
-      <input type="text" name="pen_id" hidden>
-  
-      <div id="images">
-        <br>
-        Pen Image URL:
-        <input type="text" name="images"> 
-        <br>
-        <br>
+<div class="panel-heading">
+      <h2 class="panel-title">Create Pen Post</h2>
+    </div>
+<div class="panel-body">
+      <form action ="/create_pen_post_form" method="POST" enctype="multipart/form-data">
+        <input type="text" name="pen_id" hidden>
+            
+        <div class="form-group">
+          <div id="images">
+            <p><label for="images">Pen Image URL:</label><input class="form-control" type="text" name="images"></p>
+          </div>
+          <p><button type="button" class="btn btn-default btn-xs" id="add-new-image">Add New Image</button></p>
+        </div>
+
+        <div class="form-group">
+          <p><label for="pen_name">Pen Name:</label><input class="form-control" type="text" name="pen_name"></p>
+          <p><label for="brand_name">Brand Name:</label><input class="form-control" type="text" name="brand_name"></p>
+
+        <p><label for="production_start_year">Production Start Year:</label><input class="form-control" type="text" name="production_start_year"></p>
+        <p><label for="production_end_year">Production End Year:</label><input class="form-control" type="text" name="production_end_year"></p>
+        <p><label for="general_info">General Info:</label><textarea class="form-control" id="general_info" name="general_info"></textarea></p>
+
+        <p><label for="pen_production_version">Pen Production Version:</label>
+          <select class="form-control" name="pen_production_version">
+            <option value="none">None</option>
+            <option value="standard_stock_pen">Standard Stock Pen</option>
+            <option value="special_edition">Special Edition</option>
+            <option value="limited_edition">Limited Edition</option>
+            <option value="custom pen">Custom Pen</option>
+            <option value="franken_pen">Franken-Pen</option>
+          </select>
+        </p>
+        <p><label for="pen_type">Pen Type:</label>
+          <select class="form-control" name="pen_type">
+            <option value="none">None</option>
+            <option value="fountain_pen">Fountain Pen</option>
+            <option value="combo_pen">Combo Pen</option>
+            <option value="dip_pen">Dip Pen</option>
+            <option value="reed_pen">Reed Pen</option>
+            <option value="brush_pen">Brush Pen</option>
+            <option value="rollerball_pen">Rollerball Pen</option>
+            <option value="ballpoint_pen">Ballpoint Pen</option>
+            <option value="gel_pen">Gel Pen</option>
+            <option value="multi_funtion_pen">Multi-funtion Pen/Pencil</option>
+            <option value="mechanical_pencil">Mechanical Pencil</option>
+            <option value="audi">Septer Pencil</option>
+            <option value="lead_holder">Lead Holder</option>
+            <option value="Other">Other</option>     
+          </select>
+        </p>
+        <p><button type='submit' class="btn btn-default" value='Submit'>Submit</button></p>
+        </div> 
+
+      </form>
+    </div></div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2 class="panel-title">Search by brand name</h2>
+          </div>
+          <div class="panel-body">
+            <form action ="/show_search_results" method="GET">
+              <input type="text" name="brand_name">
+              <button type='submit' value='Submit' class="btn btn-default">Search</button>
+            </form>
+        </div>
       </div>
 
-      <button type="button" id="add-new-image">Add New Image</button>
-      <br>
-      <br>
-      Pen Name:
-      <input type="text" name="pen_name">
-      <br>
-      <br>
-      Brand Name:
-      <input type="text" name="brand_name">
-      <br>
-      <br>
-      Production Start Year:
-      <input type="text" name="production_start_year">
-      <br>
-      <br>
-      Production End Year:
-      <input type="text" name="production_end_year">
-      <br>
-      <br>
-      General Info:
-      <textarea id="general_info" name="general_info"></textarea>
-      <br>
-      <br>
-      Pen Production Version:
-      <select name="pen_production_version">
-        <option value="none">None</option>
-        <option value="standard_stock_pen">Standard Stock Pen</option>
-        <option value="special_edition">Special Edition</option>
-        <option value="limited_edition">Limited Edition</option>
-        <option value="custom pen">Custom Pen</option>
-        <option value="franken_pen">Franken-Pen</option>
-      </select>
-      <br>
-      <br>
-      Pen Type:
-      <select name="pen_type">
-        <option value="none">None</option>
-        <option value="fountain_pen">Fountain Pen</option>
-        <option value="combo_pen">Combo Pen</option>
-        <option value="dip_pen">Dip Pen</option>
-        <option value="reed_pen">Reed Pen</option>
-        <option value="brush_pen">Brush Pen</option>
-        <option value="rollerball_pen">Rollerball Pen</option>
-        <option value="ballpoint_pen">Ballpoint Pen</option>
-        <option value="gel_pen">Gel Pen</option>
-        <option value="multi_funtion_pen">Multi-funtion Pen/Pencil</option>
-        <option value="mechanical_pencil">Mechanical Pencil</option>
-        <option value="audi">Septer Pencil</option>
-        <option value="lead_holder">Lead Holder</option>
-        <option value="Other">Other</option>     
-      </select>
-      <br>
-      <br>
-      <button type='submit' value='Submit'>Submit</button>
-      </form>
-      <script>
-        $('#add-new-image').click(function() {
-            $('#images').append('<br>Pen Image URL:<input type="text" name="images"> <br><br>');
-        });
-      </script>
-      <br>
-      <br>
-      <form action ="/show_search_results" method="GET">
-        Search by brand name:
-        <input type="text" name="brand_name">
-        <button type='submit' value='Submit'>Search</button>
-      </form>
-    <br>
-    <form action="/logout" method="GET">
-    <button type="submit">Logout</button>
-    </form>
-    <br>
-    <br>
+  <h2><a href="/logout" class="btn btn-default btn-lg">Logout</a></h2>
 
+  </div> <!-- col -->
 
+</div> <!-- row -->
+
+  <script>
+    $('#add-new-image').click(function() {
+        $('#images').append('<p><label for="images">Pen Image URL:</label><input class="form-control" type="text" name="images"></p>');
+    });
+  </script>
 
 {% endblock %}
 
