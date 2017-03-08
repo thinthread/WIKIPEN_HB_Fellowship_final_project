@@ -48,7 +48,7 @@ app.secret_key = "ABC"
 connect_to_db(app)
 
     # Use the DebugToolbar
-DebugToolbarExtension(app)
+# DebugToolbarExtension(app)
 
 ########################### VIEWS ###############################
 
