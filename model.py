@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy.sql import func
+
 # from datetime import datetime
 
 db = SQLAlchemy()
@@ -43,8 +44,8 @@ class StockPen(db.Model):
         return "/pens/%s" % self.s_pen_id
 
     def __repr__(self):
-        return "<StockPen pen_title=%s manufacturer=%s start_year=%s end_year=%s \
-                 general_info=%s pen_category=%s pen_version=%s>" % (self.pen_title,
+        return "<StockPen pen_title=%s manufacturer=%s start_year=%s end_year=%s general_info=%s pen_category=%s pen_version=%s>" % \
+                                                                    (self.pen_title,
                                                                      self.manufacturer,
                                                                      self.start_year,
                                                                      self.end_year,
@@ -114,4 +115,4 @@ if __name__ == "__main__":
 
     db.create_all()
 
-    print "Connected to DB."
+    print("Connected to DB.")

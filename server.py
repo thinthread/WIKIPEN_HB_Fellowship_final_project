@@ -7,7 +7,7 @@ from flask import Flask, request, redirect  # ,url_for
 # from werkzeug import secure_filename
 
 from flask import send_from_directory
-from flask_sse import sse
+from flask_sse import sse #flask server sent events powered by redis
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
@@ -128,10 +128,10 @@ def login():
 
     email = request.form.get("email")
     password = request.form.get("password")
-    print '\n\n\n email: ', email
-    print '\n\n\n password: ', password
+    print('\n\n\n email: ', email)
+    print('\n\n\n password: ', password)
     user_info = User.query.filter_by(user_id_email=email).first()
-    print '\n\n\n\n\n', user_info, '\n\n\n\n\n\n'
+    print('\n\n\n\n\n', user_info, '\n\n\n\n\n\n')
     if user_info:
         # user_id = user_info.user_id_email
         if user_info.password == password:
@@ -183,8 +183,7 @@ def create_pen_post_form():
         pen = db.session.query(StockPen.pen_title).filter_by(pen_title=pen_name).first()
 
         if pen:
-                flash("Sorry that specific pen name has already been created. \
-                       Please choose another another. Thank you!")
+                flash("Sorry that specific pen name has already been created. Please choose another another. Thank you!")
 
                 return redirect("/create_pen_post_form")
 
@@ -375,18 +374,22 @@ def update_pen():
     return redirect("/pens/%s" % s_pen_id)
 
 
-# @app.route('/uploads/<filename>')
-# def uploaded_file(filename):
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
 
-#     return send_from_directory(app.config['UPLOAD_FOLDER'],
-#                                filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
 
-        ##### egister uploaded_file as build_only rule
-        # app.add_url_rule('/uploads/<filename>', 'uploaded_file',
-        #                  build_only=True)
-        # app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-        #     '/uploads':  app.config['UPLOAD_FOLDER']
-# })
+        #### register uploaded_file as build_only rule
+        #### wsgi- Web Server Gateway Interface - is an interfacebetween a web server & Python web frameworks/applications
+        #### The Web Server Gateway Interface (WSGI) is a simple calling convention for web servers to forward requests to 
+        #### web applications or frameworks written in the Python programming language. The current version of WSGI, 
+        #### version 1.0.1, is specified in Python Enhancement Proposal (PEP) 3333.
+        #### Pep, Pep 333 or Pep 3333 is Python's Web Server Gateway Interface
+    app.add_url_rule('/uploads/<filename>', 'uploaded_file',
+                         build_only=True)
+    app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+            '/uploads':  app.config['UPLOAD_FOLDER']})
 
 @app.route("/pens/<int:pen_id>", methods=["GET"])
 def pen(pen_id):
@@ -437,8 +440,14 @@ def show_search_results():
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
-    app.run(port=5001, host='0.0.0.0')
+
+    # app.run(port=5000, host='0.0.0.0', debug=True)
+    app.run(port=5000, host='0.0.0.0')
 
 # to run gunicorn server
 # gunicorn server:app --worker-class gevent --bind 0.0.0.0:5000 --reload --graceful-timeout 3
-
+# WSGI web server gateway interface
+# default: Fixed port collision for 5000 => 5000. Now on port 2200.
+# ==> default: Fixed port collision for 22 => 2222. Now on port 2201.
+# ==> default: Forwarding ports...
+#     default: 5000 (guest) => 2200 (host) (adapter 1)
