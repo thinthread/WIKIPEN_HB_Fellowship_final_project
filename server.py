@@ -47,7 +47,7 @@ app.secret_key = "ABC"
 
 connect_to_db(app)
 
-    # Use the DebugToolbar
+# Use the DebugToolbar
 # DebugToolbarExtension(app)
 
 ########################### VIEWS ###############################
@@ -315,7 +315,8 @@ def create_pen_post_form():
 
 @app.route("/update_pen", methods=['POST'])
 def update_pen():
-
+    """ Update pen info via user input."""
+    
     form_images = request.form.getlist("images")
 
     pen_name = request.form.get("pen_name")
@@ -376,20 +377,16 @@ def update_pen():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
+    """Handle uploaded files, add url rule."""
 
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
 
-        #### register uploaded_file as build_only rule
-        #### wsgi- Web Server Gateway Interface - is an interfacebetween a web server & Python web frameworks/applications
-        #### The Web Server Gateway Interface (WSGI) is a simple calling convention for web servers to forward requests to 
-        #### web applications or frameworks written in the Python programming language. The current version of WSGI, 
-        #### version 1.0.1, is specified in Python Enhancement Proposal (PEP) 3333.
-        #### Pep, Pep 333 or Pep 3333 is Python's Web Server Gateway Interface
     app.add_url_rule('/uploads/<filename>', 'uploaded_file',
                          build_only=True)
     app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
             '/uploads':  app.config['UPLOAD_FOLDER']})
+
 
 @app.route("/pens/<int:pen_id>", methods=["GET"])
 def pen(pen_id):

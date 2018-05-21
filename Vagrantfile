@@ -68,17 +68,29 @@ Vagrant.configure("2") do |config|
     apt-get -y full-upgrade
 
     # feel free to add more software, e.g. postgresql or whatever
-    apt-get install -y python#{p3}-pip postgresql libssl-dev redis-server
+    apt-get install -y python#{p3}-pip postgresql postgresql-contrib libssl-dev redis-server libpq-dev
     
     pip#{p3} install --upgrade pip
     
-    pip install -r /home/vagrant/src/requirements.txt
+    pip#{p3} install -r /home/vagrant/src/requirements.txt
 
-    echo "export FLASK_APP=/home/vagrant/src/server.py" >> ~vagrant/.profile
+    sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+    wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+
+    echo "export FLASK_APP=/home/vagrant/src/server.py" >> ~vagrant/.profile 
     echo "export FLASK_DEBUG=1" >> ~vagrant/.profile
     echo "export VAGRANT_DIR='#{Dir.pwd.sub(Dir.home, "~")}'" >> ~vagrant/.profile
+
     # if you need to run a seed.py or something, this might be a good
     # place to add that.
+    sudo -u postgres psql <<EOF
+      CREATE USER vagrant;
+      CREATE DATABASE pens;
+      GRANT ALL ON DATABASE pens TO vagrant;
+EOF
+
+    sudo -u vagrant python3 /home/vagrant/src/model.py
+
   SHELL
 
   ###### SJB (See David) https://github.com/lindes/tutorials/blob/master/vagrants/flask-py3/Vagrantfile 
@@ -93,7 +105,7 @@ Vagrant.configure("2") do |config|
   # -i (is login) -n(is non-interactive. avoid proption user for input) flask run -h (is host) 0 (is ?)
   # -p ( prompt ? port?)
   config.vm.provision "shell", run: "always", inline: <<-SHELL
-    # look for flask  which is actually listening:
+    # look for flask  which is actually listening, in this case flask is seen as python3:
     if lsof -i | grep python3
     then
       # note: this will also print out the lsof info with the (guest) port number.
@@ -101,8 +113,10 @@ Vagrant.configure("2") do |config|
     else
       # start a new flask:
       echo "Flask doesn't seem to have been running; we'll try to start one."
+      # Hmmmmmm need to change this, how to run Flask but also Gunicorn.
+      # Can't run/ show DB till streaming is reinstated.
       (sudo -u vagrant -i -n flask run -h 0 -p 5000 2>&1 | logger -plocal0.info -t flask.run) &
-      sleep 5       # this *seems* to be all it takes, but maybe not always.
+      sleep 7       # this *seems* to be all it takes, but maybe not always.
       if lsof -i | grep python3
       then
         echo "Sweet, looks like it's up now. :)"
