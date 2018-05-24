@@ -442,7 +442,7 @@ if __name__ == "__main__":
     app.run(port=5000, host='0.0.0.0')
 
 # to run gunicorn server
-# gunicorn server:app --worker-class gevent --bind 0.0.0.0:5000 --reload --graceful-timeout 3
+# gunicorn server:app --worker-class gevent --bind 0.0.0.0:5000 --reload-engine poll --graceful-timeout 30
 # WSGI web server gateway interface
 # default: Fixed port collision for 5000 => 5000. Now on port 2200.
 # ==> default: Fixed port collision for 22 => 2222. Now on port 2201.

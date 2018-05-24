@@ -8,6 +8,7 @@ want_python_3=true
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
@@ -69,8 +70,8 @@ EOF
 
   ###### SJB 
   config.vm.provision "shell", run: "always", inline: <<-SHELL
-    # look for flask  which is actually listening, in this case flask is seen as python3:
-    if lsof -i | grep python3
+    # look for flask  which is actually listening, in this case flask is seen as python3 actually gunicorn:
+    if lsof -i | grep gunicorn
     then
       # note: this will also print out the lsof info with the (guest) port number.
       echo "Looks like flask is already running!  Woohoo!"
@@ -80,10 +81,10 @@ EOF
 
       # Hmmmmmm need to change this, how to run Flask but also Gunicorn.
       # Can't run/ show DB till streaming is reinstated.
-      (sudo -u vagrant -i -n flask run -h 0 -p 5000 2>&1 | logger -plocal0.info -t flask.run) &
-      sleep 7       # this *seems* to be all it takes, but maybe not always.
+      sudo -u vagrant -i -n gunicorn server:app --worker-class gevent --bind 0.0.0.0:5000 --reload-engine poll --graceful-timeout 30 --chdir /home/vagrant/src --daemon --log-syslog
+      sleep 1       # this *seems* to be all it takes, but maybe not always.
       
-      if lsof -i | grep python3
+      if lsof -i | grep gunicorn
       then
         echo "Sweet, looks like it's up now. :)"
       
