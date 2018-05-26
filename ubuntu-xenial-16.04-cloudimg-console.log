@@ -621,4 +621,4 @@ cloud-init[961]: ci-info: |   0   |   0.0.0.0   | 10.0.2.2 |    0.0.0.0    |   e
 
 Ubuntu 16.04.4 LTS ubuntu-xenial ttyS0
 
-ubuntu-xenial login: 
+ubuntu-xenial login: [100301.716409] e1000 0000:00:03.0 enp0s3: Reset adapter
